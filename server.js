@@ -10,7 +10,6 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'Test-Verse API is up and already for use...' });
 });
