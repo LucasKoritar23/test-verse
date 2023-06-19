@@ -26,13 +26,10 @@ pipeline {
             steps {
                 script {
                     def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-github', keyFileVariable: 'SSH_KEY')]) {
-                        sh 'git config --global user.name "DevOps"'
-                        sh 'git config --global user.email "$EMAIL"'
-                        sh "git tag ${version}"
-                        sh "git push origin ${version}"
-                    }
-                    
+                    sh 'git config --global user.name "DevOps"'
+                    sh 'git config --global user.email "$EMAIL"'
+                    sh "git tag ${version}"
+                    sh "git push origin ${version}"
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"New release generated: ${version}\"}' $DISCORD_WEBHOOK_URL"
                 }
             }
