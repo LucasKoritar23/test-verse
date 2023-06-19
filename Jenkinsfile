@@ -25,6 +25,12 @@ pipeline {
         stage('Release') {
             steps {
                 script {
+                    checkout([$class: 'GitSCM',
+                    branches: [[name: '*/**']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CleanBeforeCheckout']],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[url: 'https://github.com/LucasKoritar23/test-verse.git']]])
                     def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
                     sh 'git config --global user.name "DevOps"'
                     sh 'git config --global user.email "$EMAIL"'
