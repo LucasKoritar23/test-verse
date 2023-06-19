@@ -25,17 +25,11 @@ pipeline {
         stage('Release') {
             steps {
                 script {
-                    checkout([$class: 'GitSCM',
-                    branches: [[name: '*/**']],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'CleanBeforeCheckout']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/LucasKoritar23/test-verse.git']]])
                     def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
                     sh 'git config --global user.name "DevOps"'
                     sh 'git config --global user.email "$EMAIL"'
-                    sh "git tag ${version}"
-                    sh "git push origin ${version}"
+                    sh "git tag -a ${version}"
+                    sh "git push origin refs/tags/${version}"
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"New release generated: ${version}\"}' $DISCORD_WEBHOOK_URL"
                 }
             }
