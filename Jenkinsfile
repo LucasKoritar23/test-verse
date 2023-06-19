@@ -9,7 +9,7 @@ pipeline {
 
                 // Checkout the source code from GitHub
                 checkout([$class: 'GitSCM',
-                          branches: [[name: '*/master']],
+                          branches: [[name: '*/main']],
                           userRemoteConfigs: [[url: 'https://github.com/LucasKoritar23/test-verse.git']]])
 
                 // Install Node.js dependencies
