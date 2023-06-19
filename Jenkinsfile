@@ -1,10 +1,6 @@
 pipeline {
     agent any
-
-    triggers {
-        cron('* * * * *')
-    }
-    
+        
     stages {
         stage('Checkout') {
             steps {
@@ -29,11 +25,12 @@ pipeline {
 
         stage('Release') {
             steps {
-                // Generate a release tag
-                sh 'TAG=$(date "+%Y%m%d%H%M%S") && git tag $TAG && git push origin $TAG'
-
-                // Notify Discord about the release
-                sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"New release generated: $TAG\"}' $DISCORD_WEBHOOK_URL"
+                script {
+                    def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
+                    sh "git tag -a v${version} -m 'Version ${version}'"
+                    sh 'git push --tags'
+                    sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"New release generated: ${version}\"}' $DISCORD_WEBHOOK_URL"
+                }
             }
         }
     }
