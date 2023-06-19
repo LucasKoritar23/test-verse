@@ -1,17 +1,27 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+    
     stages {
+        stage('Checkout') {
+            steps {
+                 // Notify Discord that the build is starting
+                sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"Build starting...\"}' $DISCORD_WEBHOOK_URL"
+                checkout scm
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/**']],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions: [[$class: 'CleanBeforeCheckout']],
+                          submoduleCfg: [],
+                          userRemoteConfigs: [[url: 'https://github.com/LucasKoritar23/test-verse.git']]])
+            }
+        }
+
         stage('Build') {
             steps {
-                // Notify Discord that the build is starting
-                sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"Build starting...\"}' $DISCORD_WEBHOOK_URL"
-
-                // Checkout the source code from GitHub
-                checkout([$class: 'GitSCM',
-                          branches: [[name: '*/main']],
-                          userRemoteConfigs: [[url: 'https://github.com/LucasKoritar23/test-verse.git']]])
-
                 // Install Node.js dependencies
                 sh 'npm install'
 
