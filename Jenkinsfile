@@ -24,9 +24,6 @@ pipeline {
             steps {
                 // Install Node.js dependencies
                 sh 'npm install'
-
-                // Build the application
-                sh 'npm run build'
             }
         }
 
