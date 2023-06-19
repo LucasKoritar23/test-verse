@@ -6,7 +6,6 @@ pipeline {
             steps {
                  // Notify Discord that the build is starting
                 sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"Build starting...\"}' $DISCORD_WEBHOOK_URL"
-                checkout scm
                 checkout([$class: 'GitSCM',
                           branches: [[name: '*/**']],
                           doGenerateSubmoduleConfigurations: false,
@@ -27,6 +26,8 @@ pipeline {
             steps {
                 script {
                     def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
+                    sh 'git config --global user.name "DevOps"'
+                    sh 'git config --global user.email "$EMAIL"'
                     sh "git tag -a v${version} -m 'Version ${version}'"
                     sh 'git push --tags'
                     sh "curl -X POST -H 'Content-Type: application/json' -d '{\"content\":\"New release generated: ${version}\"}' $DISCORD_WEBHOOK_URL"
