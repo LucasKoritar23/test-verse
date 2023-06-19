@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     def version = sh(script: 'echo $BUILD_NUMBER', returnStdout: true).trim()
-                    sshagent(credentials: ['ssh-key-github']) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-github', keyFileVariable: 'SSH_KEY')]) {
                         sh '''
                             git config --global user.name "DevOps"
                             git config --global user.email "$EMAIL"
