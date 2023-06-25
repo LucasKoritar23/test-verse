@@ -40,7 +40,7 @@ pipeline {
             sh '''
                 curl -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
-                    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+                    "avatar_url": "https://w7.pngwing.com/pngs/829/527/png-transparent-computer-icons-jenkins-mauldin-jenkins-llc-head-communication-mauldin-jenkins-llc-thumbnail.png",
                     "embeds": [{
                         "title": "Build Report",
                         "description": "Build successful! :white_check_mark:",
