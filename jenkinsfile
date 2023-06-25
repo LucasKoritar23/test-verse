@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone repository') {
             steps {
-                git 'https://github.com/seu-usuario/seu-repositorio.git'
+                git 'https://github.com/LucasKoritar23/test-verse'
             }
         }
         
@@ -24,10 +24,8 @@ pipeline {
                     sh 'npm install'
                     
                     // Startar a aplicação
-                    sh 'npm start &'
+                    sh 'nodemon api/suites/index.js'
                     
-                    // Aguardar alguns segundos para garantir que a aplicação esteja em execução
-                    sleep 10
                 }
             }
         }
@@ -54,12 +52,12 @@ pipeline {
     post {
         success {
             // Enviar mensagem de sucesso para o Discord via webhook
-            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Build, testes e deploy concluídos com sucesso!"}\' https://discord.com/api/webhooks/seu-webhook'
+            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Build, testes e deploy concluídos com sucesso!"}\' ${DISCORD_WEBHOOK_URL}'
         }
         
         failure {
             // Enviar mensagem de falha para o Discord via webhook
-            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Falha na build, testes ou deploy!"}\' https://discord.com/api/webhooks/seu-webhook'
+            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Falha na build, testes ou deploy!"}\' ${DISCORD_WEBHOOK_URL}'
         }
     }
 }
