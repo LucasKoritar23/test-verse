@@ -23,6 +23,15 @@ pipeline {
             }
         }
 
+        stage('check-docker') {
+            steps {
+                script {
+                    sh 'docker -v'
+                    sh 'docker-compose -v'
+                }
+            }
+        }
+
     }
     
     post {
