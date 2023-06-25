@@ -1,0 +1,160 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Suites API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/suites": {
+      "get": {
+        "summary": "Obtém todas as suites.",
+        "responses": {
+          "200": {
+            "description": "Array contendo todas as suites."
+          },
+          "500": {
+            "description": "Erro ao obter as suites."
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria uma nova suite.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeSuite": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string"
+                  },
+                  "statusAtual": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto contendo a suite criada."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "500": {
+            "description": "Erro ao criar a suite."
+          }
+        }
+      }
+    },
+    "/suites/{id}": {
+      "get": {
+        "summary": "Obtém uma suite por ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite encontrada."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao obter a suite."
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza uma suite existente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeSuite": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string"
+                  },
+                  "statusAtual": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite atualizada."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao atualizar a suite."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui uma suite existente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite excluída."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao excluir a suite."
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}

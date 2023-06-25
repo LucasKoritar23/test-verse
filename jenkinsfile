@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone repository') {
+            steps {
+                git 'https://github.com/seu-usuario/seu-repositorio.git'
+            }
+        }
+        
+        stage('Build and Start Application') {
+            steps {
+                script {
+                    // Iniciar containers via Docker Compose
+                    sh 'docker-compose up -d'
+                    
+                    // Aguardar até que os serviços estejam prontos para aceitar conexões
+                    waitUntil {
+                        sh 'docker-compose ps -q | xargs docker inspect -f \'{{ .State.Status }}\' | grep -v running'
+                        return (sh(returnStatus: true, script: 'echo $?').trim() == '1')
+                    }
+                    
+                    // Realizar o build do projeto
+                    sh 'npm install'
+                    
+                    // Startar a aplicação
+                    sh 'npm start &'
+                    
+                    // Aguardar alguns segundos para garantir que a aplicação esteja em execução
+                    sleep 10
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                // Executar os testes
+                sh 'npm test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Se os testes passarem, prosseguir com o deploy
+                if (currentBuild.result == 'SUCCESS') {
+                    // Seu comando de deploy aqui
+                } else {
+                    error('Falha nos testes. O deploy não será realizado.')
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            // Enviar mensagem de sucesso para o Discord via webhook
+            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Build, testes e deploy concluídos com sucesso!"}\' https://discord.com/api/webhooks/seu-webhook'
+        }
+        
+        failure {
+            // Enviar mensagem de falha para o Discord via webhook
+            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Falha na build, testes ou deploy!"}\' https://discord.com/api/webhooks/seu-webhook'
+        }
+    }
+}
