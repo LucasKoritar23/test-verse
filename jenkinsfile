@@ -24,8 +24,10 @@ pipeline {
                     sh 'npm install'
                     
                     // Startar a aplicação
-                    sh 'nodemon api/suites/index.js'
+                    sh 'nodemon api/suites/index.js &&'
                     
+                    // Aguardar alguns segundos para garantir que a aplicação esteja em execução
+                    sleep 10
                 }
             }
         }
@@ -40,10 +42,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Se os testes passarem, prosseguir com o deploy
-                if (currentBuild.result == 'SUCCESS') {
-                    // Seu comando de deploy aqui
-                } else {
-                    error('Falha nos testes. O deploy não será realizado.')
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        // Seu comando de deploy aqui
+                    } else {
+                        error('Falha nos testes. O deploy não será realizado.')
+                    }
                 }
             }
         }
