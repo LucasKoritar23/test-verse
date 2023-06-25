@@ -1,35 +1,36 @@
-const { Client } = require('pg');
+const { Pool } = require('pg');
 const fs = require('fs');
+const path = require('path');
 
-// Configurações de conexão com o banco de dados
-const dbConfig = {
+async function applyScript() {
+  const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
+    database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-};
+  });
 
-console.log(dbConfig);
-// Ler o conteúdo do arquivo SQL
-const scriptContent = fs.readFileSync('./applyScripts.js', 'utf8');
-
-// Função para executar o script SQL
-async function executeScript() {
-    const client = new Client(dbConfig);
+  try {
+    const client = await pool.connect();
 
     try {
-        await client.connect();
+      const scriptPath = path.join(__dirname, 'suite.sql');
+      const script = fs.readFileSync(scriptPath, 'utf8');
 
-        // Executar o script SQL
-        await client.query(scriptContent);
-
-        console.log('Script de banco de dados executado com sucesso!');
+      await client.query(script);
+      console.log('Script executado com sucesso!');
     } catch (error) {
-        console.error('Erro ao executar o script de banco de dados:', error);
+      console.error('Erro ao executar o script:', error);
     } finally {
-        await client.end();
+      client.release(); // Libera o cliente de volta para o pool
     }
+  } catch (error) {
+    console.error('Erro ao obter cliente do pool:', error);
+  } finally {
+    pool.end(); // Encerra todas as conexões no pool
+  }
 }
 
-executeScript();
+// Chame a função applyScript após o deploy ou onde fizer sentido no seu código
+applyScript();
