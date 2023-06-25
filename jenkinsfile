@@ -24,26 +24,13 @@ pipeline {
             }
         }
 
-        // stage('Start Application') {
-        //     steps {
-        //         script {
-        //             // Iniciar containers via Docker Compose
-        //             sh 'docker-compose up -d'
-                    
-        //             // Aguardar até que os serviços estejam prontos para aceitar conexões
-        //             waitUntil {
-        //                 sh 'docker-compose ps -q | xargs docker inspect -f \'{{ .State.Status }}\' | grep -v running'
-        //                 return (sh(returnStatus: true, script: 'echo $?').trim() == '1')
-        //             }
-                    
-        //             // Startar a aplicação
-        //             sh 'nodemon api/suites/index.js &&'
-                    
-        //             // Aguardar alguns segundos para garantir que a aplicação esteja em execução
-        //             sleep 10
-        //         }
-        //     }
-        // }
+        stage('Start Application') {
+            steps {
+                script {
+                    sh 'nodemon api/suites/index.js'
+                }
+            }
+        }
         
         // stage('Run Tests') {
         //     steps {
