@@ -53,7 +53,7 @@ pipeline {
                         "description": "Build successful! :white_check_mark:",
                         "color": 65340,
                         "footer": {
-                            "text": "Timestamp: '${currentTimestamp}'"
+                            "text": "test-verse API"
                         },
                         "fields": [
                             {
@@ -85,7 +85,7 @@ pipeline {
                         "description": "Build error! :frowning2:",
                         "color": 16711680,
                         "footer": {
-                            "text": "Timestamp: ${currentTimestamp}"
+                            "text": "test-verse API"
                         },
                         "fields": [
                             {
