@@ -24,8 +24,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    build: .
-    image: test-verse
+    image: test-verse:45
     restart: always
     networks:
       - api

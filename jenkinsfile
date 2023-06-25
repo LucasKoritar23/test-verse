@@ -33,6 +33,14 @@ pipeline {
             }
         }
 
+        stage('Check Files') {
+            steps {
+                script {
+                    sh 'ls -la'
+                }
+            }
+        }
+
         stage('Build Docker Application') {
             steps {
                 sh 'docker build -t test-verse:${BUILD_ID} .'
