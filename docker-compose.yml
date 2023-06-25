@@ -20,7 +20,7 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - /test-verse/db/suite.sql:docker-entrypoint-initdb.d/suite.sql
+      - /var/jenkins_home/workspace/pipeline-test-verse/db/suite.sql:docker-entrypoint-initdb.d/suite.sql
 
   api:
     image: test-verse:latest
