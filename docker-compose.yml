@@ -1,5 +1,10 @@
 version: '3.8'
 
+networks:
+  api:
+  db:
+
+
 services:
   db:
     image: postgres:latest
@@ -10,10 +15,27 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_HOST: ${DB_HOST}
       POSTGRES_PORT: ${DB_PORT}
+    networks:
+      - db
+      - api
     ports:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    image: test-verse
+    restart: always
+    networks:
+      - api
+      - db
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   pgdata:
