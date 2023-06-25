@@ -18,45 +18,25 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    sh 'ls'
                     sh 'npm install'
                 }
             }
         }
 
-        stage('Start Application') {
-            steps {
-                script {
-                    sh 'nodemon api/suites/index.js'
-                }
-            }
-        }
-        
-        // stage('Run Tests') {
-        //     steps {
-        //         // Executar os testes
-        //         sh 'npm test'
-        //     }
-        // }
-        
-        // stage('Deploy') {
-        //     steps {
-        //         // Se os testes passarem, prosseguir com o deploy
-        //         script {
-        //             if (currentBuild.result == 'SUCCESS') {
-        //                 // Seu comando de deploy aqui
-        //             } else {
-        //                 error('Falha nos testes. O deploy não será realizado.')
-        //             }
-        //         }
-        //     }
-        // }
     }
     
     post {
         success {
             // Enviar mensagem de sucesso para o Discord via webhook
-            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Build, testes e deploy concluídos com sucesso!"}\' ${DISCORD_WEBHOOK_URL}'
+             sh '''
+                        curl -X POST -H "Content-Type: application/json" -d '{
+                          "embeds": [{
+                            "title": "Build Status",
+                            "description": "Build successful! :white_check_mark:",
+                            "color": 65340
+                          }]
+                        }' ${DISCORD_WEBHOOK_URL}
+                '''
         }
         
         failure {
