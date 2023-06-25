@@ -1,6 +1,7 @@
 FROM node:18
 
 WORKDIR /test-verse
+COPY .env .
 COPY . .
 
 RUN npm install
