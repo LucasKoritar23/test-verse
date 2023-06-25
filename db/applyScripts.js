@@ -11,6 +11,14 @@ async function applyScript() {
     port: process.env.DB_PORT,
   });
 
+  console.log({
+    user: process.env.DB_USER,
+    host: '0.0.0.0',
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+  })
+
   try {
     const client = await pool.connect();
 
