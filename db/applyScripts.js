@@ -12,7 +12,7 @@ const dbConfig = {
 
 console.log(dbConfig);
 // Ler o conteúdo do arquivo SQL
-const scriptContent = fs.readFileSync('/var/jenkins_home/workspace/pipeline-test-verse/db/suite.sql', 'utf8');
+const scriptContent = fs.readFileSync('./applyScripts.js', 'utf8');
 
 // Função para executar o script SQL
 async function executeScript() {
