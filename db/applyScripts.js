@@ -6,7 +6,7 @@ async function applyScript() {
   // host: '192.168.0.17'
   const configDB = {
     user: process.env.DB_USER,
-    host: process.env.DB_HOST,
+    host: 'localhost',
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
