@@ -30,8 +30,9 @@ pipeline {
             // Enviar mensagem de sucesso para o Discord via webhook
             sh '''
                 curl -X POST -H "Content-Type: application/json" -d '{
+                    "username": "'${JOB_NAME}'",
                     "embeds": [{
-                        "title": "'${JOB_NAME}'",
+                        "title": "Build Report",
                         "description": "Build successful! :white_check_mark:",
                         "color": 65340,
                         "fields": [
