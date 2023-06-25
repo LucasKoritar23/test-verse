@@ -10,11 +10,11 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_HOST: ${DB_HOST}
-      POSTGRES_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
     networks:
       - db
       - api
@@ -24,7 +24,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   api:
-    image: test-verse:57
+    image: test-verse:58
     restart: always
     networks:
       - api
