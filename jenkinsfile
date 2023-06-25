@@ -46,7 +46,7 @@ pipeline {
                         "color": 65340,
                         "footer": {
                             "text": "Timestamp: ${currentTimestamp}"
-                        }
+                        },
                         "fields": [
                             {
                                 "name": "Pipeline Name",
@@ -78,7 +78,7 @@ pipeline {
                         "color": 16711680,
                         "footer": {
                             "text": "Timestamp: ${currentTimestamp}"
-                        }
+                        },
                         "fields": [
                             {
                                 "name": "Pipeline Name",
