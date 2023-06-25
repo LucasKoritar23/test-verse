@@ -61,6 +61,19 @@ pipeline {
         //         sh 'docker push test-verse:${BUILD_ID}'
         //     }
         // }
+        stage('Deploy') {
+            steps {
+                // Atualizar a imagem no arquivo docker-compose.yml
+                script {
+                def dockerComposeFile = readFile('docker-compose.yml')
+                dockerComposeFile = dockerComposeFile.replace('test-verse:latest', 'nome-da-imagem:${BUILD_ID}')
+                writeFile file: 'docker-compose.yml', text: dockerComposeFile
+                }
+                
+                // Executar o deploy usando o Docker Compose
+                sh 'docker-compose up -d'
+            }
+    }
     }
     
     post {
