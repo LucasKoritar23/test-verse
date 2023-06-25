@@ -35,11 +35,19 @@ pipeline {
 
         stage('Build') {
             steps {
-                script {
-                    sh 'npm install'
+                    sh 'docker build -t test-verse:${BUILD_ID} .'
                 }
             }
-        }
+                
+        stage('Tag') {
+            steps {
+                    script {
+                        def image = docker.image('test-verse:${BUILD_ID}')
+                        image.tag('test-verse:${BUILD_ID}')
+                        image.push()
+                    }
+                }
+            }
     }
     
     post {
