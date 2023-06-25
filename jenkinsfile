@@ -72,9 +72,8 @@ pipeline {
                 }
                 
                 // Executar o deploy usando o Docker Compose
-                sh 'docker-compose up -d db'
+                sh 'docker-compose up -d'
                 sh 'node /var/jenkins_home/workspace/pipeline-test-verse/db/applyScripts.js'
-                sh 'docker-compose up -d api'
             }
     }
     }

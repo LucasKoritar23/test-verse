@@ -31,4 +31,4 @@ async function executeScript() {
   }
 }
 
-await executeScript();
+executeScript();
