@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DB_USER = "'${DB_USER}'"
-        DB_HOST = "'${DB_HOST}'"
-        DB_DATABASE = "'${DB_DATABASE}'"
-        DB_PASSWORD = "'${DB_PASSWORD}'"
-        DB_PORT = "'${DB_PORT}'"
+        DB_USER = "$DB_USER"
+        DB_HOST = "$DB_HOST"
+        DB_DATABASE = "$DB_DATABASE"
+        DB_PASSWORD = "$DB_PASSWORD"
+        DB_PORT = "$DB_PORT"
   }
     
     stages {
@@ -51,6 +51,7 @@ pipeline {
 
         stage('Build Docker Application') {
             steps {
+                sh 'printenv'
                 sh 'docker build -t test-verse:${BUILD_ID} .'
             }
         }
