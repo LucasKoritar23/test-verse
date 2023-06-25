@@ -36,7 +36,6 @@ pipeline {
     
     post {
         success {
-            // Enviar mensagem de sucesso para o Discord via webhook
             sh '''
                 curl -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
@@ -45,6 +44,9 @@ pipeline {
                         "title": "Build Report",
                         "description": "Build successful! :white_check_mark:",
                         "color": 65340,
+                        "footer": {
+                            "text": "Timestamp: ${currentTimestamp}"
+                        }
                         "fields": [
                             {
                                 "name": "Pipeline Name",
@@ -66,8 +68,34 @@ pipeline {
         }
         
         failure {
-            // Enviar mensagem de falha para o Discord via webhook
-            sh 'curl -X POST -H "Content-Type: application/json" -d \'{"content": "Falha na build, testes ou deploy!"}\' ${DISCORD_WEBHOOK_URL}'
+            sh '''
+                curl -X POST -H "Content-Type: application/json" -d '{
+                    "username": "'${JOB_NAME}'",
+                    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+                    "embeds": [{
+                        "title": "Build Report",
+                        "description": "Build error! :frowning2:",
+                        "color": 16711680,
+                        "footer": {
+                            "text": "Timestamp: ${currentTimestamp}"
+                        }
+                        "fields": [
+                            {
+                                "name": "Pipeline Name",
+                                "value": "'${JOB_NAME}'"
+                            },
+                            {
+                                "name": "Build ID",
+                                "value": "'${BUILD_ID}'"
+                            },
+                            {
+                                "name": "Pipeline URL",
+                                "value": "'${BUILD_URL}'"
+                            }
+                        ]
+                    }]
+                }' "$DISCORD_WEBHOOK_URL"
+            '''
         }
     }
 }
