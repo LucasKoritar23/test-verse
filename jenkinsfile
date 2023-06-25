@@ -15,15 +15,7 @@ pipeline {
             }
         }
         
-        stage('Build') {
-            steps {
-                script {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('check-docker') {
+        stage('check Docker and docker-compose') {
             steps {
                 script {
                     sh 'docker -v'
@@ -32,6 +24,22 @@ pipeline {
             }
         }
 
+        stage('check NodeJS and NPM') {
+            steps {
+                script {
+                    sh 'node -v'
+                    sh 'npm -v'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    sh 'npm install'
+                }
+            }
+        }
     }
     
     post {
@@ -45,7 +53,7 @@ pipeline {
                         "description": "Build successful! :white_check_mark:",
                         "color": 65340,
                         "footer": {
-                            "text": "Timestamp: ${currentTimestamp}"
+                            "text": "Timestamp: '${currentTimestamp}'"
                         },
                         "fields": [
                             {
