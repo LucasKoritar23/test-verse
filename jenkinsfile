@@ -28,29 +28,30 @@ pipeline {
     post {
         success {
             // Enviar mensagem de sucesso para o Discord via webhook
-             sh '''
-                        curl -X POST -H "Content-Type: application/json" -d '{
-                        "embeds": [{
-                            "title": "Build Status",
-                            "description": "Build successful! :white_check_mark:",
-                            "color": 65340,
-                            "fields": [
+             sh """
+                curl -X POST -H 'Content-Type: application/json' -d '{
+                    "embeds": [{
+                        "title": 'Build Status',
+                        "description": 'Build successful! :white_check_mark:',
+                        "color": 65340,
+                        "fields": [
                                 {
-                                    "name": "Pipeline Name",
-                                    "value": "${JOB_NAME}"
+                                    "name": 'Pipeline Name',
+                                    "value": '${JOB_NAME}'
                                 },
                                 {
-                                    "name": "Build ID",
-                                    "value": "${BUILD_ID}"
+                                    "name": 'Build ID',
+                                    "value": '${BUILD_ID}'
                                 },
                                 {
-                                    "name": "Pipeline URL",
-                                    "value": "${BUILD_URL}"
+                                    "name": 'Pipeline URL',
+                                    "value": '${BUILD_URL}'
                                 }
                             ]
                         }]
-                        }' ${DISCORD_WEBHOOK_URL}
-                '''
+                    }' ${DISCORD_WEBHOOK_URL}
+                """
+
         }
         
         failure {
