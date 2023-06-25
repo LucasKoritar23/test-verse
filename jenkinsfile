@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone repository') {
             steps {
-                git 'https://github.com/LucasKoritar23/test-verse'
+                git credentialsId: 'ssh-key-github', url: 'https://github.com/LucasKoritar23/test-verse'
             }
         }
         
