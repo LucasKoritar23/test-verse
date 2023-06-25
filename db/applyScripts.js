@@ -10,8 +10,10 @@ const dbConfig = {
     port: "$DB_PORT",
 };
 
+
+console.log(dbConfig);
 // Ler o conteúdo do arquivo SQL
-const scriptContent = fs.readFileSync('./suite.sql', 'utf8');
+const scriptContent = fs.readFileSync('/var/jenkins_home/workspace/pipeline-test-verse/db/suite.sql', 'utf8');
 
 // Função para executar o script SQL
 async function executeScript() {
