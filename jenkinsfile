@@ -2,9 +2,16 @@ pipeline {
     agent any
     
     stages {
-        stage('Clone repository') {
+        stage('Checkout') {
             steps {
-                git credentialsId: 'ssh-key-github', url: 'https://github.com/LucasKoritar23/test-verse'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/develop']],
+                    userRemoteConfigs: [[
+                        url: 'git@github.com:LucasKoritar23/test-verse.git',
+                        credentialsId: 'ssh-key-github'
+                    ]]
+                ])
             }
         }
         
