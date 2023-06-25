@@ -41,11 +41,7 @@ pipeline {
                 
         stage('Tag') {
             steps {
-                    script {
-                        def image = docker.image('test-verse:${BUILD_ID}')
-                        image.tag('test-verse:${BUILD_ID}')
-                        image.push()
-                    }
+                sh 'docker push -t test-verse:${BUILD_ID} .'
                 }
             }
     }
