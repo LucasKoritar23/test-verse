@@ -49,7 +49,7 @@ pipeline {
                                 }
                             ]
                         }]
-                    }' ${DISCORD_WEBHOOK_URL}
+                    }' '${DISCORD_WEBHOOK_URL}'
                 """
 
         }
