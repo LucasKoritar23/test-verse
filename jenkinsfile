@@ -66,7 +66,7 @@ pipeline {
                 // Atualizar a imagem no arquivo docker-compose.yml
                 script {
                 def dockerComposeFile = readFile('docker-compose.yml')
-                dockerComposeFile = dockerComposeFile.replace('test-verse:latest', 'nome-da-imagem:${BUILD_ID}')
+                dockerComposeFile = dockerComposeFile.replace('test-verse:latest', 'test-verse:${BUILD_ID}')
                 writeFile file: 'docker-compose.yml', text: dockerComposeFile
                 }
                 
