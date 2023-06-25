@@ -3,21 +3,16 @@ const fs = require('fs');
 const path = require('path');
 
 async function applyScript() {
-  const pool = new Pool({
+  const configDB = {
     user: process.env.DB_USER,
-    host: 'localhost',
+    host: '192.168.0.17',
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-  });
+  }
+  const pool = new Pool(configDB);
 
-  console.log({
-    user: process.env.DB_USER,
-    host: '0.0.0.0',
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-  })
+  console.log(configDB)
 
   try {
     const client = await pool.connect();
