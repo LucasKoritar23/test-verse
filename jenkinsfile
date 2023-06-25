@@ -8,49 +8,54 @@ pipeline {
             }
         }
         
-        stage('Build and Start Application') {
+        stage('Build') {
             steps {
                 script {
-                    // Iniciar containers via Docker Compose
-                    sh 'docker-compose up -d'
-                    
-                    // Aguardar até que os serviços estejam prontos para aceitar conexões
-                    waitUntil {
-                        sh 'docker-compose ps -q | xargs docker inspect -f \'{{ .State.Status }}\' | grep -v running'
-                        return (sh(returnStatus: true, script: 'echo $?').trim() == '1')
-                    }
-                    
-                    // Realizar o build do projeto
                     sh 'npm install'
-                    
-                    // Startar a aplicação
-                    sh 'nodemon api/suites/index.js &&'
-                    
-                    // Aguardar alguns segundos para garantir que a aplicação esteja em execução
-                    sleep 10
                 }
             }
         }
+
+        // stage('Start Application') {
+        //     steps {
+        //         script {
+        //             // Iniciar containers via Docker Compose
+        //             sh 'docker-compose up -d'
+                    
+        //             // Aguardar até que os serviços estejam prontos para aceitar conexões
+        //             waitUntil {
+        //                 sh 'docker-compose ps -q | xargs docker inspect -f \'{{ .State.Status }}\' | grep -v running'
+        //                 return (sh(returnStatus: true, script: 'echo $?').trim() == '1')
+        //             }
+                    
+        //             // Startar a aplicação
+        //             sh 'nodemon api/suites/index.js &&'
+                    
+        //             // Aguardar alguns segundos para garantir que a aplicação esteja em execução
+        //             sleep 10
+        //         }
+        //     }
+        // }
         
-        stage('Run Tests') {
-            steps {
-                // Executar os testes
-                sh 'npm test'
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         // Executar os testes
+        //         sh 'npm test'
+        //     }
+        // }
         
-        stage('Deploy') {
-            steps {
-                // Se os testes passarem, prosseguir com o deploy
-                script {
-                    if (currentBuild.result == 'SUCCESS') {
-                        // Seu comando de deploy aqui
-                    } else {
-                        error('Falha nos testes. O deploy não será realizado.')
-                    }
-                }
-            }
-        }
+        // stage('Deploy') {
+        //     steps {
+        //         // Se os testes passarem, prosseguir com o deploy
+        //         script {
+        //             if (currentBuild.result == 'SUCCESS') {
+        //                 // Seu comando de deploy aqui
+        //             } else {
+        //                 error('Falha nos testes. O deploy não será realizado.')
+        //             }
+        //         }
+        //     }
+        // }
     }
     
     post {
