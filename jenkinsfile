@@ -35,15 +35,15 @@ pipeline {
 
         stage('Build') {
             steps {
-                    sh 'docker build -t test-verse:${BUILD_ID} .'
-                }
+                sh 'docker build -t test-verse:${BUILD_ID} .'
             }
+        }
                 
         stage('Tag') {
             steps {
-                sh 'docker push -t test-verse:${BUILD_ID} .'
-                }
+                sh 'docker push test-verse:${BUILD_ID} .'
             }
+        }
     }
     
     post {
