@@ -3,9 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 async function applyScript() {
+  // host: '192.168.0.17'
   const configDB = {
     user: process.env.DB_USER,
-    host: '192.168.0.17',
+    host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
