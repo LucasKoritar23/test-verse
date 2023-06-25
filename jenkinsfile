@@ -41,7 +41,7 @@ pipeline {
                 
         stage('Tag') {
             steps {
-                sh 'docker push test-verse:${BUILD_ID} .'
+                sh 'docker push test-verse:${BUILD_ID}'
             }
         }
     }
