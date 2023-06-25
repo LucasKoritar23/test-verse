@@ -37,7 +37,7 @@ pipeline {
                         "fields": [
                             {
                                 "name": "Pipeline Name",
-                                "value": "${JOB_NAME}"
+                                "value": '${JOB_NAME}'
                             },
                             {
                                 "name": "Build ID",
