@@ -10,6 +10,38 @@ pipeline {
   }
     
     stages {
+
+        stage('Start Notify'){
+            sh '''
+                curl -X POST -H "Content-Type: application/json" -d '{
+                    "username": "'${JOB_NAME}'",
+                    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+                    "embeds": [{
+                        "title": "Build Report",
+                        "description": "Starting Build ⏳",
+                        "color": 16776960,
+                        "footer": {
+                            "text": "test-verse API"
+                        },
+                        "fields": [
+                            {
+                                "name": "Pipeline Name",
+                                "value": "'${JOB_NAME}'"
+                            },
+                            {
+                                "name": "Build ID",
+                                "value": "'${BUILD_ID}'"
+                            },
+                            {
+                                "name": "Pipeline URL",
+                                "value": "'${BUILD_URL}'"
+                            }
+                        ]
+                    }]
+                }' "$DISCORD_WEBHOOK_URL"
+            '''
+        }
+
         stage('Checkout') {
             steps {
                 checkout([
@@ -73,9 +105,15 @@ pipeline {
                 
                 // Executar o deploy usando o Docker Compose
                 sh 'docker-compose up -d'
+            }
+        }
+
+        stage('Pos Deploy DB Scripts') {
+            steps {
+                sh 'npm install'
                 sh 'node /var/jenkins_home/workspace/pipeline-test-verse/db/applyScripts.js'
             }
-    }
+        }
     }
     
     post {
