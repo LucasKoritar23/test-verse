@@ -31,7 +31,7 @@ pipeline {
             sh '''
                 curl -X POST -H "Content-Type: application/json" -d '{
                     "embeds": [{
-                        "title": "Build Status",
+                        "title": "'${JOB_NAME}'",
                         "description": "Build successful! :white_check_mark:",
                         "color": 65340,
                         "fields": [
@@ -41,11 +41,11 @@ pipeline {
                             },
                             {
                                 "name": "Build ID",
-                                "value": "${BUILD_ID}"
+                                "value": "'${BUILD_ID}'"
                             },
                             {
                                 "name": "Pipeline URL",
-                                "value": "${BUILD_URL}"
+                                "value": "'${BUILD_URL}'"
                             }
                         ]
                     }]
