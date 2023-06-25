@@ -1,8 +1,7 @@
 FROM node:18
 
 WORKDIR /test-verse
-COPY .env .
-COPY . .
+COPY . /test-verse
 
 RUN npm install
 RUN npm install -g nodemon
