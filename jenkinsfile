@@ -15,7 +15,7 @@ pipeline {
             }
         }
         
-        stage('check Docker and docker-compose') {
+        stage('Check Docker and docker-compose') {
             steps {
                 script {
                     sh 'docker -v'
@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('check NodeJS and NPM') {
+        stage('Check NodeJS and NPM') {
             steps {
                 script {
                     sh 'node -v'
@@ -33,17 +33,17 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Application') {
             steps {
                 sh 'docker build -t test-verse:${BUILD_ID} .'
             }
         }
                 
-        stage('Tag') {
-            steps {
-                sh 'docker push test-verse:${BUILD_ID}'
-            }
-        }
+        // stage('Tag') {
+        //     steps {
+        //         sh 'docker push test-verse:${BUILD_ID}'
+        //     }
+        // }
     }
     
     post {
