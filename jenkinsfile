@@ -90,31 +90,26 @@ pipeline {
             }
         }
                 
-        // stage('Tag') {
+        // stage('Deploy') {
         //     steps {
-        //         sh 'docker push test-verse:${BUILD_ID}'
+        //         // Atualizar a imagem no arquivo docker-compose.yml
+        //         script {
+        //         def dockerComposeFile = readFile('docker-compose.yml')
+        //         dockerComposeFile = dockerComposeFile.replace('test-verse:latest', 'test-verse:${BUILD_ID}')
+        //         writeFile file: 'docker-compose.yml', text: dockerComposeFile
+        //         }
+                
+        //         // Executar o deploy usando o Docker Compose
+        //         sh 'docker-compose up -d'
         //     }
         // }
-        stage('Deploy') {
-            steps {
-                // Atualizar a imagem no arquivo docker-compose.yml
-                script {
-                def dockerComposeFile = readFile('docker-compose.yml')
-                dockerComposeFile = dockerComposeFile.replace('test-verse:latest', 'test-verse:${BUILD_ID}')
-                writeFile file: 'docker-compose.yml', text: dockerComposeFile
-                }
-                
-                // Executar o deploy usando o Docker Compose
-                sh 'docker-compose up -d'
-            }
-        }
 
-        stage('Pos Deploy DB Scripts') {
-            steps {
-                sh 'npm install'
-                sh 'node /var/jenkins_home/workspace/pipeline-test-verse/db/applyScripts.js'
-            }
-        }
+        // stage('Pos Deploy DB Scripts') {
+        //     steps {
+        //         sh 'npm install'
+        //         sh 'node /var/jenkins_home/workspace/pipeline-test-verse/db/applyScripts.js'
+        //     }
+        // }
     }
     
     post {
