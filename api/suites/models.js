@@ -39,7 +39,7 @@ const statusAtual = Joi.string()
 .valid('running', 'success', 'failed', 'blocked', 'new')
 .messages({
   'string.base': 'Campo statusAtual deve ser uma string.',
-  'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.'
+  'any.only': 'Campo statusAtual deve ter um valor válido. {#valids}.'
 });
 
 const id = Joi.number().integer().required().messages({
