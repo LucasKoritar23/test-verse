@@ -48,13 +48,13 @@ pipeline {
 
                     // Verifica se a pasta existe
                     def dirExists = sh(
-                        script: 'ssh -i '${pemFile}' ec2-user@${EC2_HOST} "test -d /home/ec2-user/test-verse && echo exists"',
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'test -d /home/ec2-user/test-verse && echo exists'",
                         returnStdout: true
                     ).trim()
 
                     if (dirExists == 'exists') {
-                        sh 'ssh ec2-user@${EC2_HOST}" cd /home/ec2-user/test-verse && docker-compose down"'
-                        sh 'ssh ec2-user@${EC2_HOST}" rm -r /home/ec2-user/test-verse"'
+                        sh "ssh ec2-user@${EC2_HOST} cd /home/ec2-user/test-verse && docker-compose down"
+                        sh "ssh ec2-user@${EC2_HOST} rm -r /home/ec2-user/test-verse"
                     } else {
                         echo 'A pasta não existe.'
                     }
