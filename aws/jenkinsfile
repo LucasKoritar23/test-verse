@@ -69,7 +69,7 @@ pipeline {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
-                    sh "scp -i ${pemFile} -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
+                    sh "scp -i '${pemFile}' -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
                 }
             }
         }
