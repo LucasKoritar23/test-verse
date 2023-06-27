@@ -128,7 +128,8 @@ pipeline {
 
                     sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                     // Retrieve tags from the private repository
-                    sh "docker inspect --format='{{.Tag}}' ${test-verse}"
+                    sh "docker inspect --format='{{.Tag}}' test-verse", returnStdout: true).trim()
+                    echo "tags: ${tagNumber}"
                 }
             }
         }
