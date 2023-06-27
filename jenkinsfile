@@ -1,4 +1,5 @@
 def newTag
+import groovy.json.JsonSlurper
 
 pipeline {
     agent any
@@ -119,7 +120,7 @@ pipeline {
                     ]
                     
                     def responseToken = httpRequest httpMode: 'POST', url: dockerHubAuth, contentType: 'APPLICATION_JSON', requestBody: groovy.json.JsonOutput.toJson(payload)
-                    def jsonResponseToken = readJSON text: responseToken.content
+                    def jsonResponseToken = new JsonSlurper().parseText(responseToken.content)
                     def token = jsonResponseToken.results[0].token
 
                     echo "Token: ${token}"
