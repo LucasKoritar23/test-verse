@@ -128,7 +128,7 @@ pipeline {
 
                     sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                     // Retrieve tags from the private repository
-                    def tags = sh(script: "docker image ls ${DOCKERHUB_USERNAME}/test-verse --format '{{.Tag}}'", returnStdout: true).trim()
+                    def tags = sh(script: "docker image ls test-verse --format '{{.Tag}}'", returnStdout: true).trim()
                     echo "tags: ${tags}"
                 }
             }
