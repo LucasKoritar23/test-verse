@@ -103,7 +103,7 @@ pipeline {
             steps {
                 // Realiza o login no Docker Hub usando as credenciais do Jenkins
                 withCredentials([string(credentialsId: 'access-token-docker-hub', variable: 'DOCKERHUB_TOKEN')]) {
-                    sh "docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_TOKEN"
+                    sh "echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin"
                 }
 
                 // Faz upload da imagem para o Docker Hub com a nova tag
