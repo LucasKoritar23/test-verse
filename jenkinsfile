@@ -113,39 +113,19 @@ pipeline {
         stage('Obter última tag') {
             steps {
                 script {
-                    def dockerHubAuth = "https://hub.docker.com/v2/users/login"
-                    def payload = [
-                        username: "$DOCKERHUB_USERNAME",
-                        password: "$DOCKERHUB_PASSWORD"
-                    ]
-                    
-                    def responseToken = httpRequest httpMode: 'POST', url: dockerHubAuth, contentType: 'APPLICATION_JSON', requestBody: groovy.json.JsonOutput.toJson(payload)
-                    def jsonResponseToken = new JsonSlurper().parseText(responseToken.content)
-                    def token = jsonResponseToken.results[0].token
+                    def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
+                                        --header 'Content-Type: application/json' \
+                                        --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
+
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
+
+                    // Extract the desired field using jq
+                    def fieldResponse = sh(script: "echo '${response}' | jq -r '.token'", returnStdout: true).trim()
+
+                    // Save the field response to a variable
+                    def token = fieldResponse
 
                     echo "Token: ${token}"
-
-                    def dockerHubUrl = "https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/test-verse/tags/?ordering=last_updated"
-                    
-                    def headers = [
-                        'Content-Type': 'application/json',
-                        'Authorization': "Bearer ${token}"
-                    ]
-
-                    def response = httpRequest(url: dockerHubUrl, httpMode: 'GET', headers: headers)
-                    def json = readJSON text: response.content
-                    def latestTag = json.results[0].name
-                    
-                    // A partir daqui, você pode usar a variável 'latestTag' para fazer o incremento
-                    // ou qualquer outra manipulação necessária
-                    // Por exemplo, você pode extrair o número da versão da tag e incrementá-lo
-                    def versionNumber = latestTag.replaceAll(/[^0-9.]/, '')
-                    def incrementedVersion = incrementVersion(versionNumber)
-                    
-                    echo "Última tag: ${latestTag}"
-                    echo "Versão incrementada: ${incrementedVersion}"
-                    
-                    // Você pode usar a variável 'incrementedVersion' em etapas posteriores do pipeline
                 }
             }
         }
