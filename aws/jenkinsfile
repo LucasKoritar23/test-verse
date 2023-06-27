@@ -42,12 +42,9 @@ pipeline {
 
         stage('Copy Files to EC2') {
             steps {
-                // withCredentials([sshUserPrivateKey(credentialsId: 'test-verse-pem', keyFileVariable: 'KEYFILE')]) {
-                //     sh "scp -i $KEYFILE /path/to/local/file ec2-user@${EC2_HOST}:/path/to/remote/directory"
-                // }
-                script {
-                    sh 'pwd'
-                    sh 'ls'
+                withCredentials([sshUserPrivateKey(credentialsId: 'test-verse-pem', keyFileVariable: 'KEYFILE')]) {
+                    sh "cat /var/jenkins_home/workspace/pipeline-test-verse-deploy/docker-compose.yml"
+                    sh "scp -i $KEYFILE -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
                 }
             }
         }
