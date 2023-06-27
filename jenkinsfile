@@ -85,13 +85,15 @@ pipeline {
 
         stage('Build Docker Application') {
             steps {
-                // sh 'docker build -t test-verse:${BUILD_ID} .'
-                 // Incremento da tag
-                def currentTag = getLatestTagFromDockerHub() // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
-                def newTag = incrementTag(currentTag)
+                script {
+                    // sh 'docker build -t test-verse:${BUILD_ID} .'
+                    // Incremento da tag
+                    def currentTag = getLatestTagFromDockerHub() // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
+                    def newTag = incrementTag(currentTag)
                 
-                // Realiza o build da imagem com a nova tag
-                sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                    // Realiza o build da imagem com a nova tag
+                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                }
             }
         }
 
