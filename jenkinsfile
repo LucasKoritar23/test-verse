@@ -80,30 +80,6 @@ pipeline {
             }
         }
 
-        // stage('Build Docker Application') {
-        //     steps {
-        //         script {
-        //             // sh 'docker build -t test-verse:${BUILD_ID} .'
-        //             // Incremento da tag
-        //             // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
-
-        //             def currentTag = getLatestTagFromDockerHub("$DOCKERHUB_USERNAME/test-verse")
-        //             newTag = incrementTag(currentTag)
-                
-        //             // Realiza o build da imagem com a nova tag
-        //             sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
-        //         }
-        //     }
-        // }
-
-        // stage('Publish') {
-        //     steps {
-        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-        //         // Faz upload da imagem para o Docker Hub com a nova tag
-        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
-        //     }
-        // }
-
         stage('GET Token Docker') {
             steps {
                 script {
@@ -132,13 +108,28 @@ pipeline {
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
                     currentTag = jsonResponse.results[0].name
-                    echo "Tag: ${jsonResponse.results[0].name}"
-                    echo "new Tag: ${incrementTag(currentTag)}"    
+                    newTag = incrementTag(currentTag)
+                    echo "Tag: ${currentTag}"
+                    echo "new Tag: ${newTag}"    
                 }
             }
         }
 
-                
+        stage('Build Docker Application') {
+            steps {
+                script {
+                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                }
+            }
+        }
+
+        stage('Publish') {
+            steps {
+                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+            }
+        }
+ 
         // stage('Deploy') {
         //     steps {
         //         // Atualizar a imagem no arquivo docker-compose.yml
