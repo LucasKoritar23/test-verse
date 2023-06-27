@@ -126,7 +126,7 @@ pipeline {
 
 
                     def curlGetTag = "curl --location 'https://hub.docker.com/v2/repositories/#${DOCKERHUB_USERNAME}/test-verse/tags' \
-                                       --header 'Authorization: Bearer ${token}"
+                                       --header 'Authorization: Bearer ${token}'"
 
                     def responseTag = sh(script: curlGetTag, returnStdout: true).trim()
                     def jsonResponseTag = slurper.parseText(responseTag)
