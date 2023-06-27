@@ -92,7 +92,7 @@ pipeline {
                     // Incremento da tag
                     // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
 
-                    def currentTag = getLatestTagFromDockerHub() 
+                    def currentTag = getLatestTagFromDockerHub("$DOCKERHUB_USERNAME/test-verse")
                     newTag = incrementTag(currentTag)
                 
                     // Realiza o build da imagem com a nova tag
@@ -214,7 +214,12 @@ def incrementTag(currentTag) {
     return newTag
 }
 
-def getLatestTagFromDockerHub() {
-    // Retorna null caso não tenha sido feita nenhuma subida no Docker Hub ainda
-    return null
+def getLatestTagFromDockerHub(imageName) {
+    sh "docker pull ${imageName}:latest"
+    def inspectOutput = sh(script: "docker inspect --format='{{index .RepoDigests 0}}' ${imageName}:latest", returnStdout: true).trim()
+    
+    // Extract the tag from the RepoDigests output
+    def tag = inspectOutput.tokenize('@')[1]
+    
+    return tag
 }
