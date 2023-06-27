@@ -55,6 +55,7 @@ pipeline {
                         sshagent(['test-verse-pem']) {
                             sh '''
                                 #!/bin/bash
+                                chmod 400 $KEYFILE
                                 scp -i $KEYFILE -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse
                             '''
                         }
