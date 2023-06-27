@@ -109,24 +109,45 @@ pipeline {
         //     }
         // }
 
-        stage('Retrieve Latest Version') {
+        stage('Obter última tag') {
             steps {
                 script {
-                    // Docker login
-                    withDockerRegistry(credentialsId: 'access-token-docker-hub', url: '') {
-                        // Perform API request to get latest tags
-                        def versionTag = sh(returnStdout: true, script: 'curl -s -H "Authorization: Bearer ${DOCKERHUB_TOKEN}" "https://registry.hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/test-verse/tags/?page_size=1" | jq -r ".results[0].name"')
-                        echo "Latest version tag: $versionTag"
-                        
-                        // Increment the version tag
-                        def incrementedVersion = incrementVersion(versionTag)
-                        echo "Incremented version: $incrementedVersion"
-                        
-                        // Set the incremented version as an environment variable for further use
-                        env.VERSION_TAG = incrementedVersion
-                    }
+                    def dockerHubAuth = "https://hub.docker.com/v2/users/login"
+                    def payload = [
+                        key1: "$DOCKERHUB_USERNAME",
+                        key2: "$DOCKERHUB_PASSWORD"
+                    ]
+                    
+                    def response = httpRequest httpMode: 'POST', url: dockerHubAuth, contentType: 'APPLICATION_JSON', requestBody: groovy.json.JsonOutput.toJson(payload)
+                    def json = readJSON text: response.content
+                    def token = json.results[0].token
+
+                    echo "Token: ${token}"
+
+                    def dockerHubUrl = "https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/test-verse/tags/?ordering=last_updated"
+                    
+                    def headers = [
+                        'Content-Type': 'application/json',
+                        'Authorization': "Bearer ${token}"
+                    ]
+
+                    def response = httpRequest(url: dockerHubUrl, httpMode: 'GET', headers: headers)
+                    def json = readJSON text: response.content
+                    def latestTag = json.results[0].name
+                    
+                    // A partir daqui, você pode usar a variável 'latestTag' para fazer o incremento
+                    // ou qualquer outra manipulação necessária
+                    // Por exemplo, você pode extrair o número da versão da tag e incrementá-lo
+                    def versionNumber = latestTag.replaceAll(/[^0-9.]/, '')
+                    def incrementedVersion = incrementVersion(versionNumber)
+                    
+                    echo "Última tag: ${latestTag}"
+                    echo "Versão incrementada: ${incrementedVersion}"
+                    
+                    // Você pode usar a variável 'incrementedVersion' em etapas posteriores do pipeline
                 }
             }
+        }
 
                 
         // stage('Deploy') {
@@ -217,10 +238,28 @@ pipeline {
     }
 }
 
-def incrementVersion(String version) {
-    def versionParts = version.split("\\.")
-    int lastPart = versionParts[-1] as int
-    lastPart++
-    versionParts[-1] = lastPart.toString()
-    return versionParts.join('.')
+def incrementTag(currentTag) {
+    if (currentTag == null || currentTag.trim().isEmpty()) {
+        return '1.0.0'
+    }
+    
+    def parts = currentTag.tokenize('.')
+    def major = parts[0].toInteger()
+    def minor = parts[1].toInteger()
+    def patch = parts[2].toInteger()
+    
+    patch += 1
+    
+    def newTag = "${major}.${minor}.${patch}"
+    return newTag
+}
+
+def getLatestTagFromDockerHub(imageName) {
+    sh "docker pull ${imageName}:latest"
+    def inspectOutput = sh(script: "docker inspect --format='{{index .RepoDigests 0}}' ${imageName}:latest", returnStdout: true).trim()
+    
+    // Extract the tag from the RepoDigests output
+    def tag = inspectOutput.tokenize('@')[1]
+    
+    return tag
 }
