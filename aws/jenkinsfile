@@ -54,7 +54,7 @@ pipeline {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
                     sh(
-                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'sh git clone https://github.com/LucasKoritar23/test-verse -b develop'",
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'git clone https://github.com/LucasKoritar23/test-verse -b develop'",
                         returnStdout: true
                     )
                 }
