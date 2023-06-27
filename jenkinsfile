@@ -139,7 +139,8 @@ pipeline {
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
-                    echo "Response: ${jsonResponse}"
+                    echo "Response: ${jsonResponse.results[0]}"
+                    
                 }
             }
         }
