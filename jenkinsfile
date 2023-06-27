@@ -88,7 +88,9 @@ pipeline {
                 script {
                     // sh 'docker build -t test-verse:${BUILD_ID} .'
                     // Incremento da tag
-                    def currentTag = getLatestTagFromDockerHub() // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
+                    // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
+
+                    def currentTag = getLatestTagFromDockerHub() 
                     def newTag = incrementTag(currentTag)
                 
                     // Realiza o build da imagem com a nova tag
@@ -212,4 +214,9 @@ def incrementTag(currentTag) {
     
     def newTag = "${major}.${minor}.${patch}"
     return newTag
+}
+
+def getLatestTagFromDockerHub() {
+    // Retorna null caso não tenha sido feita nenhuma subida no Docker Hub ainda
+    return null
 }
