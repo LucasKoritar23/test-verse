@@ -1,3 +1,5 @@
+def newTag
+
 pipeline {
     agent any
 
@@ -91,7 +93,7 @@ pipeline {
                     // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
 
                     def currentTag = getLatestTagFromDockerHub() 
-                    def newTag = incrementTag(currentTag)
+                    newTag = incrementTag(currentTag)
                 
                     // Realiza o build da imagem com a nova tag
                     sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
@@ -105,7 +107,7 @@ pipeline {
                 // Faz upload da imagem para o Docker Hub com a nova tag
                 sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
             }
-}
+        }
 
                 
         // stage('Deploy') {
