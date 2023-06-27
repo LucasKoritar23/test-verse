@@ -78,7 +78,7 @@ pipeline {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
-                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST}:/home/ec2-user/test-verse docker-compose up -d"
+                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST} cd /home/ec2-user/test-verse && docker-compose up -d"
                 }
             }
         }
@@ -88,7 +88,7 @@ pipeline {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
-                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST}:/home/ec2-user/test-verse docker images"
+                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST} docker images"
                 }
             }
         }
