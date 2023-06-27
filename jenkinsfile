@@ -132,7 +132,8 @@ pipeline {
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
                     currentTag = jsonResponse.results[0].name
-                    echo "Tag: ${jsonResponse.results[0].name}"    
+                    echo "Tag: ${jsonResponse.results[0].name}"
+                    echo "new Tag: ${incrementTag(currentTag)}"    
                 }
             }
         }
@@ -240,14 +241,4 @@ def incrementTag(currentTag) {
     
     def newTag = "${major}.${minor}.${patch}"
     return newTag
-}
-
-def getLatestTagFromDockerHub(imageName) {
-    sh "docker pull ${imageName}:latest"
-    def inspectOutput = sh(script: "docker inspect --format='{{index .RepoDigests 0}}' ${imageName}:latest", returnStdout: true).trim()
-    
-    // Extract the tag from the RepoDigests output
-    def tag = inspectOutput.tokenize('@')[1]
-    
-    return tag
 }
