@@ -64,9 +64,12 @@ pipeline {
         stage('Change Version file') {
             steps {
                 script {
-                    def dockerComposeFile = readFile('docker-compose.yml')
-                    dockerComposeFile = dockerComposeFile.replace('test-verse:latest', "test-verse:${params.version_deploy}")
-                    writeFile file: 'docker-compose.yml', text: dockerComposeFile
+                    def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
+                    sh "chmod 400 ${pemFile}"
+                    sh(
+                        script: script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && sed -i \"s/test-verse:latest/test-verse:${params.version_deploy}/g\" docker-compose.yml'",
+                        returnStdout: true
+                    )
                 }
             }
         }
