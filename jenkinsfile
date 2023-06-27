@@ -111,7 +111,7 @@ pipeline {
                                         --header 'Content-Type: application/json' \
                                         --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
 
-                    def response = sh(script: curlCommand, returnStdout: false).trim()
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
@@ -127,7 +127,7 @@ pipeline {
                                        --header 'Authorization: Bearer ${token}' \
                                        --header 'Content-Type: application/json'" 
                                        
-                    def response = sh(script: curlCommand, returnStdout: false).trim()
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
