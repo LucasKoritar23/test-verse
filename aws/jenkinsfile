@@ -78,7 +78,17 @@ pipeline {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
-                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
+                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST}:/home/ec2-user/test-verse docker-compose up -d"
+                }
+            }
+        }
+
+        stage('Check Version Deployed EC2') {
+            steps {
+                script {
+                    def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
+                    sh "chmod 400 ${pemFile}"
+                    sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST}:/home/ec2-user/test-verse docker images"
                 }
             }
         }
