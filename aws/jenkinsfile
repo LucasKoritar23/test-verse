@@ -67,7 +67,7 @@ pipeline {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
                     sh(
-                        script: script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && sed -i 's/test-verse:latest/test-verse:1.0.5/g' docker-compose.yml'",
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && sed -i 's/test-verse:latest/test-verse:1.0.5/g' docker-compose.yml'",
                         returnStdout: true
                     )
                 }
