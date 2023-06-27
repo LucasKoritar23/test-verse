@@ -113,19 +113,24 @@ pipeline {
         stage('Obter última tag') {
             steps {
                 script {
-                    def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
-                                        --header 'Content-Type: application/json' \
-                                        --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
+                    // def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
+                    //                     --header 'Content-Type: application/json' \
+                    //                     --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
 
-                    def response = sh(script: curlCommand, returnStdout: true).trim()
+                    // def response = sh(script: curlCommand, returnStdout: true).trim()
 
-                    // Extract the desired field using jq
-                    def fieldResponse = sh(script: "echo '${response}' | jq -r '.token'", returnStdout: true).trim()
+                    // def slurper = new JsonSlurper()
+                    // def jsonResponse = slurper.parseText(response)
+                    // def token = jsonResponse.token
+                    // echo "Saved Field Response: ${token}"
 
-                    // Save the field response to a variable
-                    def token = fieldResponse
+                    def uri = "https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/test-verse/"
 
-                    echo "Token: ${token}"
+                     sh "docker login ${uri} -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    // Retrieve tags from the private repository
+                    def tags = sh(script: 'docker image ls ${uri} --format "{{.Repository}}:{{.Tag}}"', returnStdout: true).trim()
+
+                    echo "tags: ${tags}"
                 }
             }
         }
