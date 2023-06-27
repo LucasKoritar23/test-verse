@@ -50,14 +50,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/develop']],
-                    userRemoteConfigs: [[
-                        url: 'git@github.com:LucasKoritar23/test-verse.git',
-                        credentialsId: 'ssh-key-github'
-                    ]]
-                ])
+                script {
+                    sh 'git clone -b develop https://github.com/LucasKoritar23/test-verse'
+                }
             }
         }
 
