@@ -1,4 +1,5 @@
 def newTag
+def currentTag
 def token
 import groovy.json.JsonSlurper
 
@@ -110,12 +111,11 @@ pipeline {
                                         --header 'Content-Type: application/json' \
                                         --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
 
-                    def response = sh(script: curlCommand, returnStdout: true).trim()
+                    def response = sh(script: curlCommand, returnStdout: false).trim()
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
                     token = jsonResponse.token
-                    echo "Token: ${token}"
                 }
             }
         }
@@ -127,10 +127,11 @@ pipeline {
                                        --header 'Authorization: Bearer ${token}' \
                                        --header 'Content-Type: application/json'" 
                                        
-                    def response = sh(script: curlCommand, returnStdout: true).trim()
+                    def response = sh(script: curlCommand, returnStdout: false).trim()
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
+                    currentTag = jsonResponse.results[0].name
                     echo "Tag: ${jsonResponse.results[0].name}"    
                 }
             }
