@@ -114,7 +114,14 @@ pipeline {
                 script {
                     sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
                     def dockerHubUrl = "https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/test-verse/tags/?ordering=last_updated"
-                    def response = httpRequest(url: dockerHubUrl, httpMode: 'GET')
+                    def dockerHubCredentials = 'access-token-docker-hub' // Nome das credenciais no Jenkins
+                    
+                    def response = httpRequest(
+                        url: dockerHubUrl,
+                        httpMode: 'GET',
+                        authentication: dockerHubCredentials
+                    )
+                    
                     def json = readJSON text: response.content
                     def latestTag = json.results[0].name
                     
