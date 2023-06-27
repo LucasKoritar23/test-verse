@@ -39,8 +39,6 @@ pipeline {
 
                     if (dirExists == 'exists') {
                         echo 'Folder Exist!!!'
-                        def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
-                        sh "chmod 400 ${pemFile}"
                         sh(
                             script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
                             returnStdout: true
