@@ -48,18 +48,26 @@ pipeline {
         //     }
         // }
 
+        // stage('Copy Files to EC2') {
+        //     steps {
+        //         withCredentials([sshUserPrivateKey(credentialsId: 'test-verse-pem', keyFileVariable: 'KEYFILE')]) {
+        //             script {
+        //                 sshagent(['test-verse-pem']) {
+        //                     sh '''
+        //                         #!/bin/bash
+        //                         chmod 400 $KEYFILE
+        //                         scp -i $KEYFILE -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse
+        //                     '''
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         stage('Copy Files to EC2') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'test-verse-pem', keyFileVariable: 'KEYFILE')]) {
-                    script {
-                        sshagent(['test-verse-pem']) {
-                            sh '''
-                                #!/bin/bash
-                                chmod 400 $KEYFILE
-                                scp -i $KEYFILE -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse
-                            '''
-                        }
-                    }
+                withCredentials([file(credentialsId: 'test-verse-pem', variable: 'PEMFILE')]) {
+                    sh "scp -i ${PEMFILE} var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
                 }
             }
         }
