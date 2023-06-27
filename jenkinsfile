@@ -113,23 +113,16 @@ pipeline {
         stage('Obter última tag') {
             steps {
                 script {
-                    // def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
-                    //                     --header 'Content-Type: application/json' \
-                    //                     --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
+                    def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
+                                        --header 'Content-Type: application/json' \
+                                        --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
 
-                    // def response = sh(script: curlCommand, returnStdout: true).trim()
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
 
-                    // def slurper = new JsonSlurper()
-                    // def jsonResponse = slurper.parseText(response)
-                    // def token = jsonResponse.token
-                    // echo "Saved Field Response: ${token}"
-
-                    def uri = "https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/test-verse/"
-
-                    sh "docker login https://hub.docker.com -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                    // Retrieve tags from the private repository
-                    def tags = sh(script: "docker image ls test-verse --format '{{.Tag}}'", returnStdout: true)
-                    echo "tags: ${tags}"
+                    def slurper = new JsonSlurper()
+                    def jsonResponse = slurper.parseText(response)
+                    def token = jsonResponse.token
+                    echo "Saved Field Response: ${token}"
                 }
             }
         }
