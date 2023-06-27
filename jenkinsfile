@@ -85,27 +85,50 @@ pipeline {
             }
         }
 
-        stage('Build Docker Application') {
+        // stage('Build Docker Application') {
+        //     steps {
+        //         script {
+        //             // sh 'docker build -t test-verse:${BUILD_ID} .'
+        //             // Incremento da tag
+        //             // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
+
+        //             def currentTag = getLatestTagFromDockerHub("$DOCKERHUB_USERNAME/test-verse")
+        //             newTag = incrementTag(currentTag)
+                
+        //             // Realiza o build da imagem com a nova tag
+        //             sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+        //         }
+        //     }
+        // }
+
+        // stage('Publish') {
+        //     steps {
+        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+        //         // Faz upload da imagem para o Docker Hub com a nova tag
+        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+        //     }
+        // }
+
+        stage('Obter última tag') {
             steps {
                 script {
-                    // sh 'docker build -t test-verse:${BUILD_ID} .'
-                    // Incremento da tag
-                    // Função para obter a última tag do Docker Hub, implemente conforme a sua necessidade
-
-                    def currentTag = getLatestTagFromDockerHub("$DOCKERHUB_USERNAME/test-verse")
-                    newTag = incrementTag(currentTag)
-                
-                    // Realiza o build da imagem com a nova tag
-                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                    sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+                    def dockerHubUrl = "https://hub.docker.com/v2/repositories/$DOCKERHUB_USERNAME/test-verse/tags/?ordering=last_updated"
+                    def response = httpRequest(url: dockerHubUrl, httpMode: 'GET')
+                    def json = readJSON text: response.content
+                    def latestTag = json.results[0].name
+                    
+                    // A partir daqui, você pode usar a variável 'latestTag' para fazer o incremento
+                    // ou qualquer outra manipulação necessária
+                    // Por exemplo, você pode extrair o número da versão da tag e incrementá-lo
+                    def versionNumber = latestTag.replaceAll(/[^0-9.]/, '')
+                    def incrementedVersion = incrementVersion(versionNumber)
+                    
+                    echo "Última tag: ${latestTag}"
+                    echo "Versão incrementada: ${incrementedVersion}"
+                    
+                    // Você pode usar a variável 'incrementedVersion' em etapas posteriores do pipeline
                 }
-            }
-        }
-
-        stage('Publish') {
-            steps {
-                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-                // Faz upload da imagem para o Docker Hub com a nova tag
-                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
             }
         }
 
