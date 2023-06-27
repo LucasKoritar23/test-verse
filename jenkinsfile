@@ -119,8 +119,8 @@ pipeline {
                     ]
                     
                     def responseToken = httpRequest httpMode: 'POST', url: dockerHubAuth, contentType: 'APPLICATION_JSON', requestBody: groovy.json.JsonOutput.toJson(payload)
-                    def json = readJSON text: responseToken.content
-                    def token = json.results[0].token
+                    def jsonResponseToken = readJSON text: responseToken.content
+                    def token = jsonResponseToken.results[0].token
 
                     echo "Token: ${token}"
 
