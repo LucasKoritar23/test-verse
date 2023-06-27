@@ -18,33 +18,10 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/develop']],
-                    userRemoteConfigs: [[
-                        url: 'git@github.com:LucasKoritar23/test-verse.git',
-                        credentialsId: 'ssh-key-github'
-                    ]]
-                ])
-            }
-        }
-
         stage('Pull Image') {
             steps {
                 sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
                 sh "docker pull $DOCKERHUB_USERNAME/test-verse:${params.version_deploy}"
-            }
-        }
-
-        stage('Change Version file') {
-            steps {
-                script {
-                    def dockerComposeFile = readFile('docker-compose.yml')
-                    dockerComposeFile = dockerComposeFile.replace('test-verse:latest', "test-verse:${params.version_deploy}")
-                    writeFile file: 'docker-compose.yml', text: dockerComposeFile
-                }
             }
         }
 
@@ -71,12 +48,25 @@ pipeline {
             }
         }
 
-        stage('Copy Files to EC2') {
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/develop']],
+                    userRemoteConfigs: [[
+                        url: 'git@github.com:LucasKoritar23/test-verse.git',
+                        credentialsId: 'ssh-key-github'
+                    ]]
+                ])
+            }
+        }
+
+        stage('Change Version file') {
             steps {
                 script {
-                    def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
-                    sh "chmod 400 ${pemFile}"
-                    sh "scp -i '${pemFile}' -r /var/jenkins_home/workspace/pipeline-test-verse-deploy ec2-user@${EC2_HOST}:/home/ec2-user/test-verse"
+                    def dockerComposeFile = readFile('docker-compose.yml')
+                    dockerComposeFile = dockerComposeFile.replace('test-verse:latest', "test-verse:${params.version_deploy}")
+                    writeFile file: 'docker-compose.yml', text: dockerComposeFile
                 }
             }
         }
@@ -114,6 +104,4 @@ pipeline {
             }
         }
     }
-
-
 }
