@@ -60,18 +60,11 @@ pipeline {
             }
         }
         
-        stage('Check Docker and docker-compose') {
+        stage('Check Depencies for build') {
             steps {
                 script {
                     sh 'docker -v'
                     sh 'docker-compose -v'
-                }
-            }
-        }
-
-        stage('Check NodeJS and NPM') {
-            steps {
-                script {
                     sh 'node -v'
                     sh 'npm -v'
                 }
@@ -82,7 +75,6 @@ pipeline {
             steps {
                 script {
                     sh 'ls -la'
-                    sh 'pwd'
                 }
             }
         }
@@ -139,8 +131,7 @@ pipeline {
 
                     def slurper = new JsonSlurper()
                     def jsonResponse = slurper.parseText(response)
-                    echo "Response: ${jsonResponse.results[0]}"
-                    
+                    echo "Tag: ${jsonResponse.results[0].name}"    
                 }
             }
         }
