@@ -98,7 +98,7 @@ pipeline {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
                     sh(
-                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && sed -i 's/test-verse:latest/test-verse:1.0.5/g' docker-compose.yml'",
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && sed -i 's/test-verse:latest/test-verse:${params.version_deploy}/g' docker-compose.yml'",
                         returnStdout: true
                     )
                 }
@@ -116,9 +116,8 @@ pipeline {
                         script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin'",
                         returnStdout: true
                     )
-                    def commandUp = "${envsApp} && docker-compose up -d"
                     sh(
-                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && ${commandUp}'",
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && ${envsApp} && docker-compose up -d'",
                         returnStdout: true
                     )
                     // sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST} echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
