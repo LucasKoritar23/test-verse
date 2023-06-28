@@ -40,10 +40,6 @@ pipeline {
                                 },
                                 "fields": [
                                     {
-                                        "name": "Version Image",
-                                        "value": "'${params.version_deploy}'"
-                                    },
-                                    {
                                         "name": "Pipeline URL",
                                         "value": "'${BUILD_URL}'"
                                     }
@@ -164,10 +160,6 @@ pipeline {
                         },
                         "fields": [
                             {
-                                "name": "Version Image",
-                                "value": "'${params.version_deploy}'"
-                            },
-                            {
                                 "name": "Pipeline URL",
                                 "value": "'${BUILD_URL}'"
                             }
@@ -191,10 +183,6 @@ pipeline {
                             "text": "test-verse API"
                         },
                         "fields": [
-                            {
-                                "name": "Version Image",
-                                "value": "'${params.version_deploy}'"
-                            },
                             {
                                 "name": "Pipeline URL",
                                 "value": "'${BUILD_URL}'"
