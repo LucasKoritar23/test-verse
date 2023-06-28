@@ -90,8 +90,10 @@ pipeline {
                         script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin'",
                         returnStdout: true
                     )
+
+                    def commandUp = "docker-compose up -e DB_USER=$DB_USER -e DB_HOST=$DB_HOST -e DB_DATABASE=$DB_DATABASE -e  DB_PASSWORD=$DB_PASSWORD -e DB_PORT=$DB_PORT"
                     sh(
-                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose up -d'",
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && ${commandUp}'",
                         returnStdout: true
                     )
                     // sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST} echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
