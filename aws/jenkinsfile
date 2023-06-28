@@ -91,7 +91,7 @@ pipeline {
                         returnStdout: true
                     )
 
-                    def commandUp = "docker-compose up -e DB_USER=$DB_USER -e DB_HOST=$DB_HOST -e DB_DATABASE=$DB_DATABASE -e  DB_PASSWORD=$DB_PASSWORD -e DB_PORT=$DB_PORT"
+                    def commandUp = "docker-compose up --env DB_USER=$DB_USER --env DB_HOST=$DB_HOST --env DB_DATABASE=$DB_DATABASE --env DB_PASSWORD=$DB_PASSWORD --env DB_PORT=$DB_PORT"
                     sh(
                         script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && ${commandUp}'",
                         returnStdout: true
@@ -110,6 +110,10 @@ pipeline {
                     // sh "ssh -i '${pemFile}' ec2-user@${EC2_HOST} docker images"
                     sh(
                         script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'docker images'",
+                        returnStdout: true
+                    )
+                    sh(
+                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'printenv'",
                         returnStdout: true
                     )
                 }
