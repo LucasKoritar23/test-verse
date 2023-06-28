@@ -39,10 +39,10 @@ pipeline {
 
                     if (dirExists == 'exists') {
                         echo 'Folder Exist!!!'
-                        sh(
-                            script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
-                            returnStdout: true
-                        )
+                        // sh(
+                        //     script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
+                        //     returnStdout: true
+                        // )
                         sh(
                             script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'rm -R /home/ec2-user/test-verse'",
                             returnStdout: true
