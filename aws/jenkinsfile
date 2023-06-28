@@ -39,10 +39,10 @@ pipeline {
 
                     if (dirExists == 'exists') {
                         echo 'Folder Exist!!!'
-                        // sh(
-                        //     script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
-                        //     returnStdout: true
-                        // )
+                        sh(
+                            script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
+                            returnStdout: true
+                        )
                         sh(
                             script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'rm -R /home/ec2-user/test-verse'",
                             returnStdout: true
@@ -85,6 +85,7 @@ pipeline {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
                     sh "chmod 400 ${pemFile}"
+                    sh "printenv"
                     sh(
                         script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin'",
                         returnStdout: true
