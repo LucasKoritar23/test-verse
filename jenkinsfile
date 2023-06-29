@@ -156,7 +156,7 @@ pipeline {
                             },
                             {
                                 "name": "Image ID",
-                                "value": "'$newTag'"
+                                "value": "'${newTag}'"
                             },
                             {
                                 "name": "Build ID",
