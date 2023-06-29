@@ -11,15 +11,76 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+const nomeTestSchema = Joi.string()
+  .min(2)
+  .max(255)
+  .trim()
+  .required()
+  .empty()
+  .pattern(/^\S.*\S$/)
+  .messages({
+    'string.base': 'Campo nomeTeste deve ser uma string.',
+    'string.min': 'Campo nomeTeste deve ter pelo menos {#limit} caracteres.',
+    'string.max': 'Campo nomeTeste não deve ter mais de {#limit} caracteres.',
+    'any.required': 'Campo nomeTeste é obrigatório.',
+    'string.empty': 'Campo nomeTeste não pode ser vazio ou consistir apenas de espaços em branco.',
+    'string.pattern.base': 'Campo nomeTeste não pode ser vazio ou consistir apenas de espaços em branco.',
+  });
+
+const ultimaExecSchema = Joi.date()
+  .allow(null)
+  .empty(null)
+  .messages({
+    'any.required': 'Campo ultimaExec deve estar preenchido.',
+    'date.base': 'Campo ultimaExec deve ser uma data válida.',
+    'date.empty': 'Campo ultimaExec não pode ser vazio ou consistir apenas de espaços em branco.',
+  });
+
+const statusUltimaExecSchema = Joi.string()
+  .allow(null)
+  .valid('running', 'success', 'failed', 'blocked', 'new')
+  .messages({
+    'string.base': 'Campo statusUltimaExec deve ser uma string.',
+    'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.',
+  });
+
+const idSuiteSchema = Joi.number().integer().required().messages({
+  'any.required': 'Parâmetro id é obrigatório.',
+  'number.base': 'Parâmetro id deve ser um número inteiro.',
+  'number.integer': 'Parâmetro id deve ser um número inteiro.',
+});
+
+const statusAtualSchema = Joi.string()
+  .valid('running', 'success', 'failed', 'blocked', 'new')
+  .messages({
+    'string.base': 'Campo statusAtual deve ser uma string.',
+    'any.only': 'Campo statusAtual deve ter um valor válido. {#valids}.'
+  });
+
+const nomeExecutorSchema = Joi.string()
+  .min(2)
+  .max(255)
+  .trim()
+  .required()
+  .empty()
+  .pattern(/^\S.*\S$/)
+  .messages({
+    'string.base': 'Campo nomeExecutor deve ser uma string.',
+    'string.min': 'Campo nomeExecutor deve ter pelo menos {#limit} caracteres.',
+    'string.max': 'Campo nomeExecutor não deve ter mais de {#limit} caracteres.',
+    'any.required': 'Campo nomeExecutor é obrigatório.',
+    'string.empty': 'Campo nomeExecutor não pode ser vazio ou consistir apenas de espaços em branco.',
+    'string.pattern.base': 'Campo nomeExecutor não pode ser vazio ou consistir apenas de espaços em branco.',
+  });
+
 const testCaseSchema = Joi.object({
-  id_teste: Joi.number().integer().required(),
-  nome_teste: Joi.string().max(255).required(),
-  ultima_exec: Joi.date().allow(null),
-  status_ultima_exec: Joi.string().max(25).allow(null),
-  id_suite: Joi.number().integer().required(),
-  status_atual: Joi.string().max(25).allow(null),
-  zip_evidencia: Joi.string().allow(null),
-  nome_executor: Joi.string().max(255).allow(null),
+  nomeTeste: nomeTestSchema,
+  ultimaExec: ultimaExecSchema,
+  statusUltimaExec: statusUltimaExecSchema,
+  idSuite: idSuiteSchema,
+  statusAtual: statusAtualSchema,
+  zipEvidencia: Joi.string().allow(null),
+  nomeExecutor: nomeExecutorSchema,
 });
 
 const getAllTestCases = async () => {
@@ -56,13 +117,13 @@ const createTestCase = async (testCase) => {
     RETURNING *;
   `;
     const values = [
-      testCase.nome_teste,
-      testCase.ultima_exec,
-      testCase.status_ultima_exec,
-      testCase.id_suite,
-      testCase.status_atual,
-      testCase.zip_evidencia,
-      testCase.nome_executor,
+      testCase.nomeTeste,
+      testCase.ultimaExec,
+      testCase.statusUltimaExec,
+      testCase.idSuite,
+      testCase.statusAtual,
+      testCase.zipEvidencia,
+      testCase.nomeExecutor,
     ];
     const { rows } = await pool.query(query, values);
     return rows[0];
@@ -76,13 +137,13 @@ const updateTestCase = async (id, testCase) => {
     const query =
       'UPDATE teste_case SET nome_teste = $1, ultima_exec = $2, status_ultima_exec = $3, id_suite = $4, status_atual = $5, zip_evidencia = $6, nome_executor = $7, data_edicao = CURRENT_TIMESTAMP WHERE id_teste = $8 RETURNING *';
     const values = [
-      testCase.nome_teste,
-      testCase.ultima_exec,
-      testCase.status_ultima_exec,
-      testCase.id_suite,
-      testCase.status_atual,
-      testCase.zip_evidencia,
-      testCase.nome_executor,
+      testCase.nomeTeste,
+      testCase.ultimaExec,
+      testCase.statusUltimaExec,
+      testCase.idSuite,
+      testCase.statusAtual,
+      testCase.zipEvidencia,
+      testCase.nomeExecutor,
       id,
     ];
     const { rows } = await pool.query(query, values);

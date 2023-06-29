@@ -25,6 +25,11 @@ const getTestCaseById = async (req, res) => {
 
 // Controlador para criar um novo caso de teste
 const createTestCase = async (req, res) => {
+  const { error } = models.testCaseSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
     const testCase = await models.createTestCase(req.body);
     res.status(201).json(testCase);

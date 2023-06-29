@@ -28,19 +28,19 @@ const nomeSuiteSchema = Joi.string()
   });
 
 const statusUltimaExecSchema = Joi.string()
-.allow(null)
-.valid('running', 'success', 'failed', 'blocked', 'new')
-.messages({
-  'string.base': 'Campo statusUltimaExec deve ser uma string.',
-  'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.',
-});
+  .allow(null)
+  .valid('running', 'success', 'failed', 'blocked', 'new')
+  .messages({
+    'string.base': 'Campo statusUltimaExec deve ser uma string.',
+    'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.',
+  });
 
-const statusAtual = Joi.string()
-.valid('running', 'success', 'failed', 'blocked', 'new')
-.messages({
-  'string.base': 'Campo statusAtual deve ser uma string.',
-  'any.only': 'Campo statusAtual deve ter um valor válido. {#valids}.'
-});
+const statusAtualSchema = Joi.string()
+  .valid('running', 'success', 'failed', 'blocked', 'new')
+  .messages({
+    'string.base': 'Campo statusAtual deve ser uma string.',
+    'any.only': 'Campo statusAtual deve ter um valor válido. {#valids}.'
+  });
 
 const id = Joi.number().integer().required().messages({
   'any.required': 'Parâmetro id é obrigatório.',
@@ -51,7 +51,7 @@ const id = Joi.number().integer().required().messages({
 const schema = Joi.object({
   nomeSuite: nomeSuiteSchema,
   statusUltimaExec: statusUltimaExecSchema,
-  statusAtual: statusAtual,
+  statusAtual: statusAtualSchema,
 });
 
 const schemaId = Joi.object({
