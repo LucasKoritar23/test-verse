@@ -50,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Verificar pasta') {
+        stage('Check Folder Exist') {
             steps {
                 script {
                     def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'

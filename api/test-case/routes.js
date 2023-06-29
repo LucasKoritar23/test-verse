@@ -7,7 +7,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
 /**
  * @swagger
  * tags:
- *   name: Test Case API
+ *   name: Test Cases API
  *   description: API endpoints para gerenciamento de casos de teste
  */
 
@@ -16,7 +16,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  * /test-cases:
  *   get:
  *     tags: 
- *       - Test Case API
+ *       - Test Cases API
  *     summary: Obter todos os casos de teste
  *     description: Retorna uma lista de todos os casos de teste.
  *     responses:
@@ -47,7 +47,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *
  *   post:
  *     tags: 
- *       - Test Case API
+ *       - Test Cases API
  *     summary: Criar um novo caso de teste
  *     description: Cria um novo caso de teste com os dados fornecidos.
  *     parameters:
@@ -103,7 +103,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  * /test-cases/{id}:
  *   get:
  *     tags: 
- *       - Test Case API
+ *       - Test Cases API
  *     summary: Obter um caso de teste pelo ID
  *     description: Retorna um caso de teste com base no ID fornecido.
  *     parameters:
@@ -139,7 +139,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *   put:
  *     summary: Atualizar um caso de teste
  *     tags: 
- *       - Test Case API
+ *       - Test Cases API
  *     description: Atualiza um caso de teste existente com os dados fornecidos.
  *     parameters:
  *       - in: path
@@ -195,7 +195,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *
  *   delete:
  *     tags: 
- *       - Test Case API
+ *       - Test Cases API
  *     summary: Excluir um caso de teste
  *     description: Exclui um caso de teste existente com base no ID fornecido.
  *     parameters:
