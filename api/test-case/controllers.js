@@ -14,6 +14,11 @@ const getAllTestCases = async (req, res) => {
 // Controlador para obter um caso de teste pelo ID
 const getTestCaseById = async (req, res) => {
   const { id } = req.params;
+  const { error: validationId } = models.schemaId.validate({ id });
+  if (validationId) {
+    return res.status(400).json({ error: validationId.details[0].message });
+  }
+
   try {
     const testCase = await models.getTestCaseById(id);
     res.json(testCase);
@@ -42,7 +47,16 @@ const createTestCase = async (req, res) => {
 // Controlador para atualizar um caso de teste
 const updateTestCase = async (req, res) => {
   const { id } = req.params;
+  const { error: validationId } = models.schemaId.validate({ id });
+  if (validationId) {
+    return res.status(400).json({ error: validationId.details[0].message });
+  }
 
+  const { error } = models.testCaseSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+  
   try {
     const testCase = await models.updateTestCase(id, req.body);
     res.json(testCase);
@@ -55,6 +69,11 @@ const updateTestCase = async (req, res) => {
 // Controlador para excluir um caso de teste
 const deleteTestCase = async (req, res) => {
   const { id } = req.params;
+  const { error: validationId } = models.schemaId.validate({ id });
+  if (validationId) {
+    return res.status(400).json({ error: validationId.details[0].message });
+  }
+  
   try {
     await models.deleteTestCase(id);
     res.json({ message: 'Caso de teste excluído com sucesso.' });

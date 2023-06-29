@@ -83,6 +83,17 @@ const testCaseSchema = Joi.object({
   nomeExecutor: nomeExecutorSchema,
 });
 
+const id = Joi.number().integer().required().messages({
+  'any.required': 'Parâmetro id é obrigatório.',
+  'number.base': 'Parâmetro id deve ser um número inteiro.',
+  'number.integer': 'Parâmetro id deve ser um número inteiro.',
+});
+
+const schemaId = Joi.object({
+  id: id,
+});
+
+
 const getAllTestCases = async () => {
   try {
     const query = 'SELECT * FROM teste_case';
@@ -176,4 +187,5 @@ module.exports = {
   updateTestCase,
   deleteTestCase,
   testCaseSchema,
+  schemaId
 };
