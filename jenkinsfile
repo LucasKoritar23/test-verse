@@ -119,7 +119,8 @@ pipeline {
         stage('Build Docker Application') {
             steps {
                 script {
-                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                    // sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                    echo "Tag: ${newTag}"
                 }
             }
         }
@@ -167,7 +168,7 @@ pipeline {
                     }]
                 }
                 """
-                discordSend webhookUrl: "$DISCORD_WEBHOOK_URL", payload: payload
+                sh "curl -X POST -H 'Content-Type: application/json' -d '$payload' $DISCORD_WEBHOOK_URL"
             }
             // script {
             //     echo "new Tag: ${newTag}"
