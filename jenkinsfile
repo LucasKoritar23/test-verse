@@ -119,25 +119,26 @@ pipeline {
         stage('Build Docker Application') {
             steps {
                 script {
-                    // sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
-                    echo "Tag: ${newTag}"
+                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
                 }
             }
         }
 
-        // stage('Publish') {
-        //     steps {
-        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
-        //     }
-        // }
+        stage('Publish') {
+            steps {
+                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+            }
+        }
     }
 
     post {
         success {
             script {
-                def payload = """
-                curl -s -X POST -H "Content-Type: application/json" -d '{
+                echo "new Tag: ${newTag}"
+                def newTagNotifier = "${newTag}"
+                sh '''
+                    curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
                     "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
                     "embeds": [{
@@ -154,7 +155,7 @@ pipeline {
                             },
                             {
                                 "name": "Image ID",
-                                "value": "'${newTag}'"
+                                "value": "'${newTagNotifier}'"
                             },
                             {
                                 "name": "Build ID",
@@ -166,46 +167,9 @@ pipeline {
                             }
                         ]
                     }]
-                }
-                """
-                sh "curl -X POST -H 'Content-Type: application/json' -d ${payload} -L $DISCORD_WEBHOOK_URL"
+                }' "$DISCORD_WEBHOOK_URL"
+            '''
             }
-            // script {
-            //     echo "new Tag: ${newTag}"
-            //     def newTagNotifier = "${newTag}"
-            //     sh '''
-            //         curl -s -X POST -H "Content-Type: application/json" -d '{
-            //         "username": "'${JOB_NAME}'",
-            //         "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
-            //         "embeds": [{
-            //             "title": "Build Report",
-            //             "description": "Build successful! :white_check_mark:",
-            //             "color": 65340,
-            //             "footer": {
-            //                 "text": "test-verse API"
-            //             },
-            //             "fields": [
-            //                 {
-            //                     "name": "Pipeline Name",
-            //                     "value": "'${JOB_NAME}'"
-            //                 },
-            //                 {
-            //                     "name": "Image ID",
-            //                     "value": "'${newTagNotifier}'"
-            //                 },
-            //                 {
-            //                     "name": "Build ID",
-            //                     "value": "'${BUILD_ID}'"
-            //                 },
-            //                 {
-            //                     "name": "Pipeline URL",
-            //                     "value": "'${BUILD_URL}'"
-            //                 }
-            //             ]
-            //         }]
-            //     }' "$DISCORD_WEBHOOK_URL"
-            // '''
-            // }
         }
 
         failure {
