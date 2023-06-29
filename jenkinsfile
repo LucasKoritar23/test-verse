@@ -12,7 +12,7 @@ pipeline {
         DB_DATABASE = "$DB_DATABASE"
         DB_PASSWORD = "$DB_PASSWORD"
         DB_PORT = "$DB_PORT"
-        NEW_TAG = "$newTag"
+        NEW_TAG = ""
   }
     
     stages {
@@ -110,6 +110,7 @@ pipeline {
                     def jsonResponse = slurper.parseText(response)
                     currentTag = jsonResponse.results[0].name
                     newTag = incrementTag(currentTag)
+                    env.NEW_TAG = newTag
                     echo "Tag: ${currentTag}"
                     echo "new Tag: ${newTag}"    
                 }
@@ -136,7 +137,7 @@ pipeline {
         success {
             script {
                 echo "new Tag: ${newTag}"
-                echo "new Tag: ${NEW_TAG}"
+                echo "new Tag ENV: ${NEW_TAG}"
                 sh '''
                     curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
