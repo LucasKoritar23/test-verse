@@ -124,12 +124,12 @@ pipeline {
             }
         }
 
-        // stage('Publish') {
-        //     steps {
-        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
-        //     }
-        // }
+        stage('Publish') {
+            steps {
+                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+            }
+        }
     }
     
     post {
