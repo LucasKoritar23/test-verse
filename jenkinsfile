@@ -168,7 +168,7 @@ pipeline {
                     }]
                 }
                 """
-                sh "curl -X POST -H 'Content-Type: application/json' -d '$payload' $DISCORD_WEBHOOK_URL"
+                sh "curl -X POST -H 'Content-Type: application/json' -d '$payload' --location $DISCORD_WEBHOOK_URL"
             }
             // script {
             //     echo "new Tag: ${newTag}"
