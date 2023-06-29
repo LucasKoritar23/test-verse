@@ -12,7 +12,6 @@ pipeline {
         DB_DATABASE = "$DB_DATABASE"
         DB_PASSWORD = "$DB_PASSWORD"
         DB_PORT = "$DB_PORT"
-        NEW_TAG = ""
   }
     
     stages {
@@ -137,7 +136,7 @@ pipeline {
         success {
             script {
                 echo "new Tag: ${newTag}"
-                echo "new Tag ENV: ${env.NEW_TAG}"
+                def newTagNotifier = "${newTag}"
                 sh '''
                     curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
@@ -156,7 +155,7 @@ pipeline {
                             },
                             {
                                 "name": "Image ID",
-                                "value": "'${newTag}'"
+                                "value": "'${newTagNotifier}'"
                             },
                             {
                                 "name": "Build ID",
