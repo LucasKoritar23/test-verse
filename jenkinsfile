@@ -137,7 +137,7 @@ pipeline {
         success {
             script {
                 echo "new Tag: ${newTag}"
-                echo "new Tag ENV: ${NEW_TAG}"
+                echo "new Tag ENV: ${env.NEW_TAG}"
                 sh '''
                     curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
