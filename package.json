@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "suites": "nodemon api/suites/index.js"
+    "startAPI": "nodemon api/index.js"
   },
   "keywords": [],
   "author": "",

@@ -5,8 +5,17 @@ const { getAllSuites, getSuiteById, createSuite, updateSuite, deleteSuite } = re
 
 /**
  * @swagger
+ * tags:
+ *   name: Suites API
+ *   description: API endpoints para gerenciamento de suites
+ */
+
+/**
+ * @swagger
  * /suites:
  *   get:
+ *     tags: 
+ *       - Suites API
  *     summary: Obtém todas as suites.
  *     responses:
  *       200:
@@ -20,6 +29,8 @@ router.get('/', getAllSuites);
  * @swagger
  * /suites/{id}:
  *   get:
+*     tags: 
+ *       - Suites API
  *     summary: Obtém uma suite por ID.
  *     parameters:
  *       - in: path
@@ -42,6 +53,8 @@ router.get('/:id', getSuiteById);
  * @swagger
  * /suites:
  *   post:
+ *     tags: 
+ *       - Suites API
  *     summary: Cria uma nova suite.
  *     requestBody:
  *       required: true
@@ -70,6 +83,8 @@ router.post('/', createSuite);
  * @swagger
  * /suites/{id}:
  *   put:
+ *     tags: 
+ *       - Suites API
  *     summary: Atualiza uma suite existente.
  *     parameters:
  *       - in: path
@@ -107,6 +122,8 @@ router.put('/:id', updateSuite);
  * @swagger
  * /suites/{id}:
  *   delete:
+ *     tags: 
+ *       - Suites API
  *     summary: Exclui uma suite existente.
  *     parameters:
  *       - in: path

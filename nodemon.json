@@ -1,4 +1,4 @@
 {
-    "ignore": ["api/suites/docs/swagger.json"]
+    "ignore": ["api/suites/docs/swagger.json", "api/test-case/docs/swagger.json", "api/docs/swagger.json"]
   }
   

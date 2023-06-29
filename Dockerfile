@@ -17,4 +17,4 @@ ENV DB_PASSWORD = $DB_PASSWORD
 ENV DB_PORT = $DB_PORT
 
 # Inicializa a aplicação
-CMD ["npm", "run", "suites"]
+CMD ["npm", "run", "startAPI"]

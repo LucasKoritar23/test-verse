@@ -7,11 +7,21 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Suites API',
+      title: 'Teste Verse API',
       version: '1.0.0',
     },
+    tags: [
+      {
+        name: 'Suites API',
+        description: 'API endpoints para gerenciamento de suites',
+      },
+      {
+        name: 'Test Cases API',
+        description: 'API endpoints para gerenciamento de casos de testes',
+      }
+    ],
   },
-  apis: [`${__dirname}/routes.js`], // Caminho para o arquivo de rotas
+  apis: [`${__dirname}/suites/routes.js`, `${__dirname}/test-case/routes.js`], // Caminho para o arquivo de rotas
 };
 
 const specs = swaggerJsdoc(options);

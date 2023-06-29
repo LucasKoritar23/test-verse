@@ -1,0 +1,470 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Teste Verse API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Suites API",
+      "description": "API endpoints para gerenciamento de suites"
+    },
+    {
+      "name": "Test Cases API",
+      "description": "API endpoints para gerenciamento de casos de testes"
+    },
+    {
+      "name": "Test Case API",
+      "description": "API endpoints para gerenciamento de casos de teste"
+    }
+  ],
+  "paths": {
+    "/suites": {
+      "get": {
+        "tags": [
+          "Suites API"
+        ],
+        "summary": "Obtém todas as suites.",
+        "responses": {
+          "200": {
+            "description": "Array contendo todas as suites."
+          },
+          "500": {
+            "description": "Erro ao obter as suites."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Suites API"
+        ],
+        "summary": "Cria uma nova suite.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeSuite": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string"
+                  },
+                  "statusAtual": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto contendo a suite criada."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "500": {
+            "description": "Erro ao criar a suite."
+          }
+        }
+      }
+    },
+    "/suites/{id}": {
+      "get": {
+        "tags": [
+          "Suites API"
+        ],
+        "summary": "Obtém uma suite por ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite encontrada."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao obter a suite."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Suites API"
+        ],
+        "summary": "Atualiza uma suite existente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeSuite": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string"
+                  },
+                  "statusAtual": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite atualizada."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao atualizar a suite."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Suites API"
+        ],
+        "summary": "Exclui uma suite existente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID da suite."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo a suite excluída."
+          },
+          "404": {
+            "description": "Suite não encontrada."
+          },
+          "500": {
+            "description": "Erro ao excluir a suite."
+          }
+        }
+      }
+    },
+    "/test-cases": {
+      "get": {
+        "tags": [
+          "Test Case API"
+        ],
+        "summary": "Obter todos os casos de teste",
+        "description": "Retorna uma lista de todos os casos de teste.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id_teste": {
+                    "type": "integer"
+                  },
+                  "nome_teste": {
+                    "type": "string"
+                  },
+                  "ultima_exec": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "status_ultima_exec": {
+                    "type": "string"
+                  },
+                  "id_suite": {
+                    "type": "integer"
+                  },
+                  "status_atual": {
+                    "type": "string"
+                  },
+                  "zip_evidencia": {
+                    "type": "string"
+                  },
+                  "nome_executor": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Test Case API"
+        ],
+        "summary": "Criar um novo caso de teste",
+        "description": "Cria um novo caso de teste com os dados fornecidos.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "testCase",
+            "description": "Objeto do caso de teste a ser criado",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome_teste": {
+                  "type": "string"
+                },
+                "ultima_exec": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status_ultima_exec": {
+                  "type": "string"
+                },
+                "id_suite": {
+                  "type": "integer"
+                },
+                "status_atual": {
+                  "type": "string"
+                },
+                "zip_evidencia": {
+                  "type": "string"
+                },
+                "nome_executor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Caso de teste criado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id_teste": {
+                  "type": "integer"
+                },
+                "nome_teste": {
+                  "type": "string"
+                },
+                "ultima_exec": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status_ultima_exec": {
+                  "type": "string"
+                },
+                "id_suite": {
+                  "type": "integer"
+                },
+                "status_atual": {
+                  "type": "string"
+                },
+                "zip_evidencia": {
+                  "type": "string"
+                },
+                "nome_executor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-cases/{id}": {
+      "get": {
+        "tags": [
+          "Test Case API"
+        ],
+        "summary": "Obter um caso de teste pelo ID",
+        "description": "Retorna um caso de teste com base no ID fornecido.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID do caso de teste a ser obtido",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id_teste": {
+                  "type": "integer"
+                },
+                "nome_teste": {
+                  "type": "string"
+                },
+                "ultima_exec": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status_ultima_exec": {
+                  "type": "string"
+                },
+                "id_suite": {
+                  "type": "integer"
+                },
+                "status_atual": {
+                  "type": "string"
+                },
+                "zip_evidencia": {
+                  "type": "string"
+                },
+                "nome_executor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar um caso de teste",
+        "tags": [
+          "Test Case API"
+        ],
+        "description": "Atualiza um caso de teste existente com os dados fornecidos.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID do caso de teste a ser atualizado",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "updatedTestCase",
+            "description": "Objeto do caso de teste atualizado",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome_teste": {
+                  "type": "string"
+                },
+                "ultima_exec": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status_ultima_exec": {
+                  "type": "string"
+                },
+                "id_suite": {
+                  "type": "integer"
+                },
+                "status_atual": {
+                  "type": "string"
+                },
+                "zip_evidencia": {
+                  "type": "string"
+                },
+                "nome_executor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso de teste atualizado com sucesso",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id_teste": {
+                  "type": "integer"
+                },
+                "nome_teste": {
+                  "type": "string"
+                },
+                "ultima_exec": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "status_ultima_exec": {
+                  "type": "string"
+                },
+                "id_suite": {
+                  "type": "integer"
+                },
+                "status_atual": {
+                  "type": "string"
+                },
+                "zip_evidencia": {
+                  "type": "string"
+                },
+                "nome_executor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Test Case API"
+        ],
+        "summary": "Excluir um caso de teste",
+        "description": "Exclui um caso de teste existente com base no ID fornecido.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID do caso de teste a ser excluído",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Caso de teste excluído com sucesso"
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}
