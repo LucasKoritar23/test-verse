@@ -12,8 +12,8 @@ pipeline {
         DB_DATABASE = "$DB_DATABASE"
         DB_PASSWORD = "$DB_PASSWORD"
         DB_PORT = "$DB_PORT"
-  }
-    
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -60,7 +60,7 @@ pipeline {
                     '''
             }
         }
-        
+
         stage('Check Depencies for build') {
             steps {
                 script {
@@ -101,8 +101,8 @@ pipeline {
                 script {
                     def curlCommand = "curl --location 'https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/test-verse/tags' \
                                        --header 'Authorization: Bearer ${token}' \
-                                       --header 'Content-Type: application/json'" 
-                                       
+                                       --header 'Content-Type: application/json'"
+
                     def response = sh(script: curlCommand, returnStdout: true).trim()
 
                     def slurper = new JsonSlurper()
@@ -111,7 +111,7 @@ pipeline {
                     newTag = incrementTag(currentTag)
                     env.NEW_TAG = newTag
                     echo "Tag: ${currentTag}"
-                    echo "new Tag: ${newTag}"    
+                    echo "new Tag: ${newTag}"
                 }
             }
         }
@@ -124,21 +124,19 @@ pipeline {
             }
         }
 
-        stage('Publish') {
-            steps {
-                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
-            }
-        }
+        // stage('Publish') {
+        //     steps {
+        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+        //     }
+        // }
     }
-    
+
     post {
         success {
             script {
-                echo "new Tag: ${newTag}"
-                def newTagNotifier = "${newTag}"
-                sh '''
-                    curl -s -X POST -H "Content-Type: application/json" -d '{
+                def payload = """
+                curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
                     "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
                     "embeds": [{
@@ -167,11 +165,48 @@ pipeline {
                             }
                         ]
                     }]
-                }' "$DISCORD_WEBHOOK_URL"
-            '''
+                }
+                """
+                discordSend webhookUrl: "$DISCORD_WEBHOOK_URL", payload: payload
             }
+            // script {
+            //     echo "new Tag: ${newTag}"
+            //     def newTagNotifier = "${newTag}"
+            //     sh '''
+            //         curl -s -X POST -H "Content-Type: application/json" -d '{
+            //         "username": "'${JOB_NAME}'",
+            //         "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+            //         "embeds": [{
+            //             "title": "Build Report",
+            //             "description": "Build successful! :white_check_mark:",
+            //             "color": 65340,
+            //             "footer": {
+            //                 "text": "test-verse API"
+            //             },
+            //             "fields": [
+            //                 {
+            //                     "name": "Pipeline Name",
+            //                     "value": "'${JOB_NAME}'"
+            //                 },
+            //                 {
+            //                     "name": "Image ID",
+            //                     "value": "'${newTagNotifier}'"
+            //                 },
+            //                 {
+            //                     "name": "Build ID",
+            //                     "value": "'${BUILD_ID}'"
+            //                 },
+            //                 {
+            //                     "name": "Pipeline URL",
+            //                     "value": "'${BUILD_URL}'"
+            //                 }
+            //             ]
+            //         }]
+            //     }' "$DISCORD_WEBHOOK_URL"
+            // '''
+            // }
         }
-        
+
         failure {
             sh '''
                 curl -s -X POST -H "Content-Type: application/json" -d '{
@@ -209,14 +244,14 @@ def incrementTag(currentTag) {
     if (currentTag == null || currentTag.trim().isEmpty()) {
         return '1.0.0'
     }
-    
+
     def parts = currentTag.tokenize('.')
     def major = parts[0].toInteger()
     def minor = parts[1].toInteger()
     def patch = parts[2].toInteger()
-    
+
     patch += 1
-    
+
     def newTag = "${major}.${minor}.${patch}"
     return newTag
 }

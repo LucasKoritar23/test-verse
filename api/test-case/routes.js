@@ -58,20 +58,20 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *         schema:
  *           type: object
  *           properties:
- *             nome_teste:
+ *             nomeTeste:
  *               type: string
- *             ultima_exec:
+ *             ultimaExec:
  *               type: string
  *               format: date
- *             status_ultima_exec:
+ *             statusUltimaExec:
  *               type: string
- *             id_suite:
+ *             idSuite:
  *               type: integer
- *             status_atual:
+ *             statusAtual:
  *               type: string
- *             zip_evidencia:
+ *             zipEvidencia:
  *               type: string
- *             nome_executor:
+ *             nomeExecutor:
  *               type: string
  *     responses:
  *       201:
@@ -154,20 +154,20 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *         schema:
  *           type: object
  *           properties:
- *             nome_teste:
+ *             nomeTeste:
  *               type: string
- *             ultima_exec:
+ *             ultimaExec:
  *               type: string
  *               format: date
- *             status_ultima_exec:
+ *             statusUltimaExec:
  *               type: string
- *             id_suite:
+ *             idSuite:
  *               type: integer
- *             status_atual:
+ *             statusAtual:
  *               type: string
- *             zip_evidencia:
+ *             zipEvidencia:
  *               type: string
- *             nome_executor:
+ *             nomeExecutor:
  *               type: string
  *     responses:
  *       200:
