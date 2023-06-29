@@ -43,10 +43,10 @@ const statusAtual = Joi.string()
 });
 
 const id = Joi.number().integer().required().messages({
-  'any.required': 'Parametro id é obrigatório.',
-  'number.base': 'Parametro id deve ser um número inteiro.',
-  'number.integer': 'Parametro id deve ser um número inteiro.',
-})
+  'any.required': 'Parâmetro id é obrigatório.',
+  'number.base': 'Parâmetro id deve ser um número inteiro.',
+  'number.integer': 'Parâmetro id deve ser um número inteiro.',
+});
 
 const schema = Joi.object({
   nomeSuite: nomeSuiteSchema,
