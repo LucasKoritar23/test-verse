@@ -123,17 +123,18 @@ pipeline {
             }
         }
 
-        stage('Publish') {
-            steps {
-                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
-                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
-            }
-        }
+        // stage('Publish') {
+        //     steps {
+        //         sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+        //         sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
+        //     }
+        // }
     }
     
     post {
         success {
             script {
+                echo "new Tag: ${newTag}"
                 sh '''
                     curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
@@ -152,7 +153,7 @@ pipeline {
                             },
                             {
                                 "name": "Image ID",
-                                "value": "'$newTag'"
+                                "value": "$newTag"
                             },
                             {
                                 "name": "Build ID",
