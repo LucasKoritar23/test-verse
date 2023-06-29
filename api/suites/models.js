@@ -95,7 +95,7 @@ const getSuiteById = async (idSuite) => {
 const createSuite = async (nomeSuite, statusUltimaExec, statusAtual) => {
   try {
     const query =
-      'INSERT INTO suites (nome_suite, status_ultima_exec, status_atual, data_criacao, data_edicao) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *';
+      'INSERT INTO suites (nome_suite, status_ultima_exec, status_atual, data_criacao, data_edicao) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, NULL) RETURNING *';
     const { rows } = await pool.query(query, [nomeSuite, statusUltimaExec, statusAtual]);
     return rows[0];
   } catch (error) {

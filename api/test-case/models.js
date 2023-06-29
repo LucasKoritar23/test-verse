@@ -48,8 +48,13 @@ const getTestCaseById = async (id) => {
 
 const createTestCase = async (testCase) => {
   try {
-    const query =
-      'INSERT INTO teste_case (nome_teste, ultima_exec, status_ultima_exec, id_suite, status_atual, zip_evidencia, nome_executor) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *';
+    const query = `
+    INSERT INTO teste_case
+      (nome_teste, ultima_exec, status_ultima_exec, id_suite, status_atual, zip_evidencia, nome_executor, data_criacao, data_edicao)
+    VALUES
+      ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, null)
+    RETURNING *;
+  `;
     const values = [
       testCase.nome_teste,
       testCase.ultima_exec,
@@ -69,7 +74,7 @@ const createTestCase = async (testCase) => {
 const updateTestCase = async (id, testCase) => {
   try {
     const query =
-      'UPDATE teste_case SET nome_teste = $1, ultima_exec = $2, status_ultima_exec = $3, id_suite = $4, status_atual = $5, zip_evidencia = $6, nome_executor = $7 WHERE id_teste = $8 RETURNING *';
+      'UPDATE teste_case SET nome_teste = $1, ultima_exec = $2, status_ultima_exec = $3, id_suite = $4, status_atual = $5, zip_evidencia = $6, nome_executor = $7, data_edicao = CURRENT_TIMESTAMP WHERE id_teste = $8 RETURNING *';
     const values = [
       testCase.nome_teste,
       testCase.ultima_exec,
