@@ -56,7 +56,7 @@ pipeline {
                                     }
                                 ]
                             }]
-                        }' "$DISCORD_TEST_WEBHOOK_URL"
+                        }' "$DISCORD_WEBHOOK_URL"
                     '''
             }
         }
@@ -77,6 +77,57 @@ pipeline {
                 script {
                     sh 'ls -la'
                 }
+            }
+        }
+
+        stage('GET Token Docker') {
+            steps {
+                script {
+                    def curlCommand = "curl --location 'https://hub.docker.com/v2/users/login' \
+                                        --header 'Content-Type: application/json' \
+                                        --data-raw '{\"username\": \"${DOCKERHUB_USERNAME}\",\"password\": \"${DOCKERHUB_PASSWORD}\"}'"
+
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
+
+                    def slurper = new JsonSlurper()
+                    def jsonResponse = slurper.parseText(response)
+                    token = jsonResponse.token
+                }
+            }
+        }
+
+        stage('GET Latest Tag') {
+            steps {
+                script {
+                    def curlCommand = "curl --location 'https://hub.docker.com/v2/repositories/${DOCKERHUB_USERNAME}/test-verse/tags' \
+                                       --header 'Authorization: Bearer ${token}' \
+                                       --header 'Content-Type: application/json'"
+
+                    def response = sh(script: curlCommand, returnStdout: true).trim()
+
+                    def slurper = new JsonSlurper()
+                    def jsonResponse = slurper.parseText(response)
+                    currentTag = jsonResponse.results[0].name
+                    newTag = incrementTag(currentTag)
+                    env.NEW_TAG = newTag
+                    echo "Tag: ${currentTag}"
+                    echo "new Tag: ${newTag}"
+                }
+            }
+        }
+
+        stage('Build Docker Application') {
+            steps {
+                script {
+                    sh "docker build -t $DOCKERHUB_USERNAME/test-verse:${newTag} ."
+                }
+            }
+        }
+
+        stage('Publish') {
+            steps {
+                sh "echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin"
+                sh "docker push $DOCKERHUB_USERNAME/test-verse:${newTag}"
             }
         }
     }
@@ -115,7 +166,7 @@ pipeline {
                             }
                         ]
                     }]
-                }' "$DISCORD_TEST_WEBHOOK_URL"
+                }' "$DISCORD_WEBHOOK_URL"
             '''
             }
         }
@@ -147,7 +198,7 @@ pipeline {
                             }
                         ]
                     }]
-                }' "$DISCORD_TEST_WEBHOOK_URL"
+                }' "$DISCORD_WEBHOOK_URL"
             '''
         }
     }
