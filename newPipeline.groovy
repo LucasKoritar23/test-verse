@@ -42,7 +42,7 @@ pipeline {
                             GIT_TAG = incrementVersion(GIT_TAG, 'MINOR')
                         }
                         
-                        def tagName = "v${GIT_TAG}"
+                        def tagName = "${GIT_TAG}"
 
                          sshagent(credentials: ['ssh-key-github']) {
                             sh "git config user.name 'Jenkins Devops'"
