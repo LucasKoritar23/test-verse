@@ -83,7 +83,7 @@ pipeline {
 }
 
 def incrementVersion(version, level) {
-    if (version == null) {
+    if (version == null || version.trim().isEmpty()) {
         return '1.0.0'
     }
     
