@@ -27,7 +27,7 @@ pipeline {
                     if (tags.size() == 0) {
                         GIT_TAG = '1.0.0' // Defina a versão inicial se nenhuma tag existir
                     } else {
-                        def latestTag = tags.last().replace('v', '')
+                        def latestTag = tags.last()
                         GIT_TAG = incrementVersion(latestTag, 'PATCH') // Incrementa a versão existente
                     }
                     
@@ -59,11 +59,18 @@ pipeline {
             steps {
                 script {
                     def repository = "lucaskoritar23/test-verse" // Nome do seu repositório Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'access-token-docker-hub') {
-                            def dockerImage = docker.build("${repository}:${GIT_TAG}", ".") // Constrói a imagem Docker com a tag especificada
+                    
+                    def tags = sh(returnStdout: true, script: 'git tag').trim().split('\n')
+                    
+                    tags.each { tag ->
+                        def dockerTag = tag.replace('/', '-') // Nome da tag da imagem para o Docker Hub
+                        
+                        docker.withRegistry('https://registry.hub.docker.com', 'access-token-docker-hub') {
+                            def dockerImage = docker.build("${repository}:${dockerTag}", ".") // Constrói a imagem Docker com a tag especificada
                             dockerImage.push() // Faz o push da imagem para o Docker Hub
                         }
                     }
+                }
             }
         }
     }
