@@ -85,9 +85,9 @@ pipeline {
                     def versionTag = ''
 
                     try {
-                        versionTag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0')
+                        versionTag = sh(returnStdout: true, script: 'git ls-remote --tags origin | awk \'END{print $2}\' | sed \'s/refs\\/tags\\///\'')
                     } catch (Exception e) {
-                        versionTag = '1.0.0'
+                        versionTag = '1.0.0' // Defina a primeira versão caso não haja tags
                     }
 
                     echo "Última Tag: ${versionTag}"
@@ -104,7 +104,7 @@ pipeline {
 
                     echo "Nova Tag: ${newVersionTag}"
 
-                    GIT_TAG = newVersionTag // Armazena a nova tag como uma variável de ambiente
+                    GIT_TAG = newVersionTag
 
                     sshagent(credentials: ['ssh-key-github']) {
                         sh "git config user.name 'Jenkins Devops'"
