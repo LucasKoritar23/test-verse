@@ -3,11 +3,11 @@ pipeline {
 
     environment {
         GIT_TAG = ''
-        DB_USER = "$DB_USER"
-        DB_HOST = "$DB_HOST"
-        DB_DATABASE = "$DB_DATABASE"
-        DB_PASSWORD = "$DB_PASSWORD"
-        DB_PORT = "$DB_PORT"
+        DB_USER = sh(returnStdout: true, script: 'echo $DB_USER').trim()
+        DB_HOST = sh(returnStdout: true, script: 'echo $DB_HOST').trim()
+        DB_DATABASE = sh(returnStdout: true, script: 'echo $DB_DATABASE').trim()
+        DB_PASSWORD = sh(returnStdout: true, script: 'echo $DB_PASSWORD').trim()
+        DB_PORT = sh(returnStdout: true, script: 'echo $DB_PORT').trim()
     }
 
     stages {
@@ -26,9 +26,15 @@ pipeline {
 
         stage('Start Notify') {
             steps {
-                sh '''
-                        curl -s -X POST -H "Content-Type: application/json" -d '{
-                            "username": "'${JOB_NAME}'",
+                script {
+                    def discordWebhookUrl = "$DISCORD_WEBHOOK_URL"
+                    def jobName = "${JOB_NAME}"
+                    def buildId = "${BUILD_ID}"
+                    def buildUrl = "${BUILD_URL}"
+
+                    sh """
+                        curl -s -X POST -H 'Content-Type: application/json' -d '{
+                            "username": "$jobName",
                             "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
                             "embeds": [{
                                 "title": "Build Report",
@@ -40,31 +46,30 @@ pipeline {
                                 "fields": [
                                     {
                                         "name": "Pipeline Name",
-                                        "value": "'${JOB_NAME}'"
+                                        "value": "$jobName"
                                     },
                                     {
                                         "name": "Build ID",
-                                        "value": "'${BUILD_ID}'"
+                                        "value": "$buildId"
                                     },
                                     {
                                         "name": "Pipeline URL",
-                                        "value": "'${BUILD_URL}'"
+                                        "value": "$buildUrl"
                                     }
                                 ]
                             }]
-                        }' "$DISCORD_WEBHOOK_URL"
-                    '''
+                        }' "$discordWebhookUrl"
+                    """
+                }
             }
         }
 
-        stage('Check Depencies for build') {
+        stage('Check Dependencies for Build') {
             steps {
-                script {
-                    sh 'docker -v'
-                    sh 'docker-compose -v'
-                    sh 'node -v'
-                    sh 'npm -v'
-                }
+                sh 'docker -v'
+                sh 'docker-compose -v'
+                sh 'node -v'
+                sh 'npm -v'
             }
         }
 
@@ -73,40 +78,31 @@ pipeline {
                 script {
                     def tags = sh(returnStdout: true, script: 'git tag').trim().split('\n')
 
-                    if (tags.size() == 0) {
-                        GIT_TAG = '1.0.0' // Defina a versão inicial se nenhuma tag existir
-                    } else {
-                        def latestTag = tags.last().replace('v', '')
-                        GIT_TAG = incrementVersion(latestTag, 'PATCH') // Incrementa a versão existente
-                    }
+                    GIT_TAG = getIncrementedVersion(tags.last())
 
                     def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
 
                     branches.each { branch ->
                         if (branch == 'master') {
-                            // Incrementa o número MAJOR para a branch 'master'
-                            GIT_TAG = incrementVersion(GIT_TAG, 'MAJOR')
+                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
                         } else if (branch == 'develop') {
-                            // Incrementa o número MINOR para as branches 'release/X.X'
-                            GIT_TAG = incrementVersion(GIT_TAG, 'MINOR')
+                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
                         }
 
                         def tagName = "${GIT_TAG}"
 
-                        // Check if the tag already exists
                         def tagExists = sh(returnStatus: true, script: "git rev-parse --verify --quiet ${tagName}")
 
                         if (tagExists == 0) {
-                            // Tag already exists, increment the tag name
-                            GIT_TAG = incrementVersion(GIT_TAG, 'PATCH')
+                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'PATCH')
                             tagName = "${GIT_TAG}"
                         }
 
                         sshagent(credentials: ['ssh-key-github']) {
                             sh "git config user.name 'Jenkins Devops'"
                             sh "git config user.email '${GIT_EMAIL}'"
-                            sh "git tag ${tagName}" // Create the tag in Git
-                            sh "git push origin ${tagName}" // Push the tag to the remote repository
+                            sh "git tag ${tagName}"
+                            sh "git push origin ${tagName}"
                         }
                     }
                 }
@@ -116,10 +112,13 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    def repository = "$DOCKERHUB_USERNAME/test-verse" // Nome do seu repositório Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', 'access-token-docker-hub') {
-                            def dockerImage = docker.build("${repository}:${GIT_TAG}", '.') // Constrói a imagem Docker com a tag especificada
-                            dockerImage.push() // Faz o push da imagem para o Docker Hub
+                    def repository = "$DOCKERHUB_USERNAME/test-verse"
+                    def dockerTag = "${GIT_TAG}"
+                    def dockerHubToken = 'access-token-docker-hub'
+
+                    docker.withRegistry('https://registry.hub.docker.com', dockerHubToken) {
+                        def dockerImage = docker.build("${repository}:${dockerTag}", '.')
+                        dockerImage.push()
                     }
                 }
             }
@@ -128,78 +127,91 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executada com sucesso!'
+            echo 'Pipeline executed successfully!'
             script {
-                sh '''
-                    curl -s -X POST -H "Content-Type: application/json" -d '{
-                    "username": "'${JOB_NAME}'",
-                    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
-                    "embeds": [{
-                        "title": "Build Report",
-                        "description": "Build successful! :white_check_mark:",
-                        "color": 65340,
-                        "footer": {
-                            "text": "test-verse API"
-                        },
-                        "fields": [
-                            {
-                                "name": "Pipeline Name",
-                                "value": "'${JOB_NAME}'"
+                def discordWebhookUrl = "$DISCORD_WEBHOOK_URL"
+                def jobName = "${JOB_NAME}"
+                def buildId = "${BUILD_ID}"
+                def buildUrl = "${BUILD_URL}"
+                def gitTag = "${GIT_TAG}"
+
+                sh """
+                    curl -s -X POST -H 'Content-Type: application/json' -d '{
+                        "username": "$jobName",
+                        "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+                        "embeds": [{
+                            "title": "Build Report",
+                            "description": "Build successful! :white_check_mark:",
+                            "color": 65340,
+                            "footer": {
+                                "text": "test-verse API"
                             },
-                            {
-                                "name": "Image ID",
-                                "value": "'${GIT_TAG}'"
-                            },
-                            {
-                                "name": "Build ID",
-                                "value": "'${BUILD_ID}'"
-                            },
-                            {
-                                "name": "Pipeline URL",
-                                "value": "'${BUILD_URL}'"
-                            }
-                        ]
-                    }]
-                }' "$DISCORD_WEBHOOK_URL"
-            '''
+                            "fields": [
+                                {
+                                    "name": "Pipeline Name",
+                                    "value": "$jobName"
+                                },
+                                {
+                                    "name": "Image ID",
+                                    "value": "$gitTag"
+                                },
+                                {
+                                    "name": "Build ID",
+                                    "value": "$buildId"
+                                },
+                                {
+                                    "name": "Pipeline URL",
+                                    "value": "$buildUrl"
+                                }
+                            ]
+                        }]
+                    }' "$discordWebhookUrl"
+                """
             }
         }
 
         failure {
-            echo 'Falha na execução da pipeline'
-            sh '''
-                curl -s -X POST -H "Content-Type: application/json" -d '{
-                    "username": "'${JOB_NAME}'",
-                    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
-                    "embeds": [{
-                        "title": "Build Report",
-                        "description": "Build error! :frowning2:",
-                        "color": 16711680,
-                        "footer": {
-                            "text": "test-verse API"
-                        },
-                        "fields": [
-                            {
-                                "name": "Pipeline Name",
-                                "value": "'${JOB_NAME}'"
+            echo 'Pipeline execution failed!'
+            script {
+                def discordWebhookUrl = "$DISCORD_WEBHOOK_URL"
+                def jobName = "${JOB_NAME}"
+                def buildId = "${BUILD_ID}"
+                def buildUrl = "${BUILD_URL}"
+
+                sh """
+                    curl -s -X POST -H 'Content-Type: application/json' -d '{
+                        "username": "$jobName",
+                        "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jenkins_logo.svg/1200px-Jenkins_logo.svg.png",
+                        "embeds": [{
+                            "title": "Build Report",
+                            "description": "Build error! :frowning2:",
+                            "color": 16711680,
+                            "footer": {
+                                "text": "test-verse API"
                             },
-                            {
-                                "name": "Build ID",
-                                "value": "'${BUILD_ID}'"
-                            },
-                            {
-                                "name": "Pipeline URL",
-                                "value": "'${BUILD_URL}'"
-                            }
-                        ]
-                    }]
-                }' "$DISCORD_WEBHOOK_URL"
-            '''
+                            "fields": [
+                                {
+                                    "name": "Pipeline Name",
+                                    "value": "$jobName"
+                                },
+                                {
+                                    "name": "Build ID",
+                                    "value": "$buildId"
+                                },
+                                {
+                                    "name": "Pipeline URL",
+                                    "value": "$buildUrl"
+                                }
+                            ]
+                        }]
+                    }' "$discordWebhookUrl"
+                """
+            }
         }
     }
 }
 
-def incrementVersion(version, level) {
+def getIncrementedVersion(version, level = 'PATCH') {
     if (version == null || version.trim().isEmpty()) {
         return '1.0.0'
     }
@@ -219,6 +231,7 @@ def incrementVersion(version, level) {
             break
 
         case 'PATCH':
+        default:
             versionArray[2] = (versionArray[2] as int) + 1
             break
     }
