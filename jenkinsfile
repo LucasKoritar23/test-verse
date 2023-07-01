@@ -82,47 +82,45 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | awk \'{print $2}\' | grep -v \'{ }\' | awk -F \'/\' \'{print $3}\' | sort -V | tail -1').trim()
-                
-                    echo "${tags}"
-                    
-                    if (tags.size() == 0) {
-                        GIT_TAG = '1.0.0' // Set the initial version if no tags exist
+                    def latestTag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 --always').trim()
+                    echo "Latest Tag: ${latestTag}"
+
+                    def versionParts = []
+                    def majorVersion, minorVersion, patchVersion
+
+                    if (latestTag) {
+                        versionParts = latestTag.tokenize('.')
+                        majorVersion = versionParts[0] as Integer
+                        minorVersion = versionParts[1] as Integer
+                        patchVersion = versionParts[2] as Integer
                     } else {
-                        def latestTag = tags.last()
-                        GIT_TAG = getIncrementedVersion(latestTag, 'PATCH') // Increment the existing version
+                        majorVersion = 0
+                        minorVersion = 1
+                        patchVersion = 0
                     }
 
-                    def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
+                    def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+                    echo "Branch Name: ${branchName}"
 
-                    branches.each { branch ->
-                        if (branch == 'master') {
-                            // Increment the MAJOR number for the 'master' branch
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
-                        } else if (branch == 'develop') {
-                            // Increment the MINOR number for the 'develop' branch
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
-                        }
+                    if (branchName == 'master') {
+                        majorVersion++
+                        minorVersion = 0
+                        patchVersion = 0
+                    } else if (branchName == 'develop') {
+                        minorVersion++
+                        patchVersion = 0
+                    }
 
-                        def tagName = "${GIT_TAG}"
+                    def newTag = "${majorVersion}.${minorVersion}.${patchVersion}"
+                    echo "New Tag: ${newTag}"
 
-                        // Check if the tag already exists
-                        def tagExists = sh(
-                            returnStatus: true,
-                            script: "git ls-remote --tags origin refs/tags/${tagName}"
-                        )
+                    GIT_TAG = newTag
 
-                        if (tagExists != 0) {
-                            // Tag does not exist, create the tag
-                            sshagent(credentials: ['ssh-key-github']) {
-                                sh "git config user.name 'Jenkins Devops'"
-                                sh "git config user.email '${GIT_EMAIL}'"
-                                sh "git tag ${tagName}" // Create the tag in Git
-                                sh "git push origin ${tagName}" // Push the tag to the remote repository
-                            }
-                        } else {
-                            echo "Tag ${tagName} already exists, skipping tag creation."
-                        }
+                    sshagent(credentials: ['ssh-key-github']) {
+                        sh "git config user.name 'Jenkins Devops'"
+                        sh "git config user.email '${GIT_EMAIL}'"
+                        sh "git tag ${newTag}" // Create the tag in Git
+                        sh "git push origin ${newTag}" // Push the tag to the remote repository
                     }
                 }
             }
