@@ -78,31 +78,42 @@ pipeline {
                 script {
                     def tags = sh(returnStdout: true, script: 'git tag').trim().split('\n')
 
-                    GIT_TAG = getIncrementedVersion(tags.last())
+                    if (tags.size() == 0) {
+                        GIT_TAG = '1.0.0' // Set the initial version if no tags exist
+                    } else {
+                        def latestTag = tags.last().replace('v', '')
+                        GIT_TAG = getIncrementedVersion(latestTag, 'PATCH') // Increment the existing version
+                    }
 
                     def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
 
                     branches.each { branch ->
                         if (branch == 'master') {
+                            // Increment the MAJOR number for the 'master' branch
                             GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
                         } else if (branch == 'develop') {
+                            // Increment the MINOR number for the 'develop' branch
                             GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
                         }
 
                         def tagName = "${GIT_TAG}"
 
-                        def tagExists = sh(returnStatus: true, script: "git rev-parse --verify --quiet ${tagName}")
+                        // Check if the tag already exists
+                        def tagExists = sh(
+                            returnStatus: true,
+                            script: "git ls-remote --tags origin refs/tags/${tagName}"
+                        )
 
-                        if (tagExists == 0) {
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'PATCH')
-                            tagName = "${GIT_TAG}"
-                        }
-
-                        sshagent(credentials: ['ssh-key-github']) {
-                            sh "git config user.name 'Jenkins Devops'"
-                            sh "git config user.email '${GIT_EMAIL}'"
-                            sh "git tag ${tagName}"
-                            sh "git push origin ${tagName}"
+                        if (tagExists != 0) {
+                            // Tag does not exist, create the tag
+                            sshagent(credentials: ['ssh-key-github']) {
+                                sh "git config user.name 'Jenkins Devops'"
+                                sh "git config user.email '${GIT_EMAIL}'"
+                                sh "git tag ${tagName}" // Create the tag in Git
+                                sh "git push origin ${tagName}" // Push the tag to the remote repository
+                            }
+                        } else {
+                            echo "Tag ${tagName} already exists, skipping tag creation."
                         }
                     }
                 }
