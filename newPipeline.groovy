@@ -44,7 +44,7 @@ pipeline {
                         
                         def tagName = "v${GIT_TAG}"
 
-                         withCredentials([usernamePassword(credentialsId: 'ssh-key-github')]) {
+                         sshagent(credentials: ['ssh-key-github']) {
                             sh "git config user.name 'Jenkins Devops'"
                             sh "git config user.email '${GIT_EMAIL}'"
                             sh "git tag ${tagName}" // Create the tag in Git
