@@ -82,12 +82,14 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def tags = sh(returnStdout: true, script: 'git tag').trim().split('\n')
-
+                    def tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | awk \'{print $2}\' | grep -v \'{ }\' | awk -F \'/\' \'{print $3}\' | sort -V | tail -1').trim()
+                
+                    echo "${tags}"
+                    
                     if (tags.size() == 0) {
                         GIT_TAG = '1.0.0' // Set the initial version if no tags exist
                     } else {
-                        def latestTag = tags.last().replace('v', '')
+                        def latestTag = tags.last()
                         GIT_TAG = getIncrementedVersion(latestTag, 'PATCH') // Increment the existing version
                     }
 
