@@ -91,6 +91,15 @@ pipeline {
                             GIT_TAG = incrementVersion(GIT_TAG, 'MINOR')
                         }
 
+                         // Check if the tag already exists
+                        def tagExists = sh(returnStatus: true, script: "git rev-parse --verify --quiet ${tagName}")
+                        
+                        if (tagExists == 0) {
+                            // Tag already exists, increment the tag name
+                            GIT_TAG = incrementVersion(GIT_TAG, 'PATCH')
+                            tagName = "${GIT_TAG}"
+                        }
+
                         def tagName = "${GIT_TAG}"
 
                         sshagent(credentials: ['ssh-key-github']) {
