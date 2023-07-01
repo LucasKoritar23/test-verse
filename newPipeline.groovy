@@ -130,7 +130,6 @@ pipeline {
         success {
             echo 'Pipeline executada com sucesso!'
             script {
-                echo "new Tag: ${newTag}"
                 sh '''
                     curl -s -X POST -H "Content-Type: application/json" -d '{
                     "username": "'${JOB_NAME}'",
