@@ -73,6 +73,12 @@ pipeline {
             }
         }
 
+        stage('Remove Local Tags') {
+            steps {
+                sh 'git tag | xargs git tag -d'
+            }
+        }
+
         stage('Set Version') {
             steps {
                 script {
