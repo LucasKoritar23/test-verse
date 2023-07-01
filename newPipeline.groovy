@@ -43,9 +43,13 @@ pipeline {
                         }
                         
                         def tagName = "v${GIT_TAG}"
-                        
-                        sh "git tag ${tagName}" // Cria a tag no Git
-                        sh "git push origin ${tagName}" // Envia a tag para o repositório remoto
+
+                         withCredentials([usernamePassword(credentialsId: 'ssh-key-github')]) {
+                            sh "git config user.name 'Jenkins Devops'"
+                            sh "git config user.email '${GIT_EMAIL}'"
+                            sh "git tag ${tagName}" // Create the tag in Git
+                            sh "git push origin ${tagName}" // Push the tag to the remote repository
+                        }
                     }
                 }
             }
