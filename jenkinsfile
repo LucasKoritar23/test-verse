@@ -85,9 +85,14 @@ pipeline {
                     def versionTag = ''
 
                     try {
-                        versionTag = sh(returnStdout: true, script: 'git ls-remote --tags origin | awk \'END{print $2}\' | sed \'s/refs\\/tags\\///\'')
+                        versionTag = sh(returnStdout: true, script: "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1")
+
+                        // Verifica se a tag está vazia
+                        if (versionTag.trim() == '') {
+                            versionTag = '1.0.0' // Defina a primeira versão caso não haja tags
+                        }
                     } catch (Exception e) {
-                        versionTag = '1.0.0' // Defina a primeira versão caso não haja tags
+                        versionTag = '1.0.0' // Defina a primeira versão caso ocorra algum erro
                     }
 
                     echo "Última Tag: ${versionTag}"
