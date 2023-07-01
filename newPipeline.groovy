@@ -140,7 +140,7 @@ pipeline {
                             },
                             {
                                 "name": "Image ID",
-                                "value": "'${newTag}'"
+                                "value": "'${GIT_TAG}'"
                             },
                             {
                                 "name": "Build ID",
