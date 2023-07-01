@@ -83,6 +83,10 @@ pipeline {
 }
 
 def incrementVersion(version, level) {
+    if (version == null) {
+        return '1.0.0'
+    }
+    
     def versionArray = version.tokenize('.')
     
     switch (level) {
