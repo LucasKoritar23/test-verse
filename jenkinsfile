@@ -82,45 +82,35 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def latestTag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0 --always').trim()
-                    echo "Latest Tag: ${latestTag}"
+                    def versionTag = ''
 
-                    def versionParts = []
-                    def majorVersion, minorVersion, patchVersion
-
-                    if (latestTag) {
-                        versionParts = latestTag.tokenize('.')
-                        majorVersion = versionParts[0] as Integer
-                        minorVersion = versionParts[1] as Integer
-                        patchVersion = versionParts[2] as Integer
-                    } else {
-                        majorVersion = 0
-                        minorVersion = 1
-                        patchVersion = 0
+                    try {
+                        versionTag = sh(returnStdout: true, script: 'git describe --tags --abbrev=0')
+                    } catch (Exception e) {
+                        versionTag = '1.0.0'
                     }
 
-                    def branchName = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-                    echo "Branch Name: ${branchName}"
+                    echo "Última Tag: ${versionTag}"
 
-                    if (branchName == 'master') {
-                        majorVersion++
-                        minorVersion = 0
-                        patchVersion = 0
-                    } else if (branchName == 'develop') {
-                        minorVersion++
-                        patchVersion = 0
+                    def versionParts = versionTag.tokenize('.').collect { it.toInteger() }
+
+                    if (env.BRANCH_NAME == 'master') {
+                        versionParts[0] += 1 // Incrementa a versão MAJOR
+                    } else if (env.BRANCH_NAME == 'develop') {
+                        versionParts[1] += 1 // Incrementa a versão MINOR
                     }
 
-                    def newTag = "${majorVersion}.${minorVersion}.${patchVersion}"
-                    echo "New Tag: ${newTag}"
+                    def newVersionTag = versionParts.join('.')
 
-                    GIT_TAG = newTag
+                    echo "Nova Tag: ${newVersionTag}"
+
+                    GIT_TAG = newVersionTag // Armazena a nova tag como uma variável de ambiente
 
                     sshagent(credentials: ['ssh-key-github']) {
                         sh "git config user.name 'Jenkins Devops'"
                         sh "git config user.email '${GIT_EMAIL}'"
-                        sh "git tag ${newTag}" // Create the tag in Git
-                        sh "git push origin ${newTag}" // Push the tag to the remote repository
+                        sh "git tag ${newVersionTag}" // Create the tag in Git
+                        sh "git push origin ${newVersionTag}" // Push the tag to the remote repository
                     }
                 }
             }
