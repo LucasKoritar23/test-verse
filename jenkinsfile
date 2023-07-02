@@ -79,6 +79,7 @@ pipeline {
                 script {
                     def tags = []
                     try {
+                        sh "git fetch --tags"
                         tags = sh(returnStdout: true, script: 'git ls-remote --tags origin')
                         .trim()
                         .split('\n')
