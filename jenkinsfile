@@ -97,15 +97,13 @@ pipeline {
 
                     echo "Tag Atual no github: ${versionTag}"
 
-                    GIT_TAG = versionTag
-
                     def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
 
                     branches.each { branch ->
                         if (branch == 'main') {
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
+                            GIT_TAG = getIncrementedVersion(versionTag, 'MAJOR')
                         } else if (branch == 'develop') {
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
+                            GIT_TAG = getIncrementedVersion(versionTag, 'MINOR')
                         }
                     }
                     
