@@ -225,6 +225,11 @@ def incrementTag(tag) {
     def minor = parts[1] as int
     def patch = parts[2] as int
 
+    echo "Parts: ${parts}"
+    echo "major": major
+    echo "minor": minor
+    echo "patch": patch
+
     if (currentBranch.startsWith('feature/')) {
         minor++
     } else if (currentBranch.startsWith('hotfix/')) {
@@ -233,5 +238,6 @@ def incrementTag(tag) {
         major++
     }
 
+    echo "possible version: ${major}.${minor}.${patch}"
     return "${major}.${minor}.${patch}"
 }
