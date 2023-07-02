@@ -77,7 +77,7 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    sh 'pritenv'
+                    sh 'printenv'
                     def tags = []
                     try {
                         tags = sh(returnStdout: true, script: 'git tag -l')
