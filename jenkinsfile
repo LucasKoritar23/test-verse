@@ -95,22 +95,20 @@ pipeline {
                         versionTag = '1.0.0' // Defina a primeira versão caso ocorra algum erro
                     }
 
-                    echo "Última Tag: ${versionTag}"
+                    echo "Tag Atual no github: ${versionTag}"
 
-                    def versionParts = versionTag.tokenize('.').collect { it.toInteger() }
+                    GIT_TAG = versionTag
 
-                    if (env.BRANCH_NAME == 'master') {
-                        versionParts[0] += 1 // Incrementa a versão MAJOR
-                    } else if (env.BRANCH_NAME == 'develop') {
-                        versionParts[1] += 1 // Incrementa a versão MINOR
+                    def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
+
+                    branches.each { branch ->
+                        if (branch == 'main') {
+                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
+                        } else if (branch == 'develop') {
+                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
+                        }
                     }
-
-                    def newVersionTag = versionParts.join('.')
-
-                    echo "Nova Tag: ${newVersionTag}"
-
-                    GIT_TAG = newVersionTag
-
+                    
                     sshagent(credentials: ['ssh-key-github']) {
                         sh "git config user.name 'Jenkins Devops'"
                         sh "git config user.email '${GIT_EMAIL}'"
