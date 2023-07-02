@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         GIT_TAG = ''
+        MY_VERSION = ''
         DB_USER = sh(returnStdout: true, script: 'echo $DB_USER').trim()
         DB_HOST = sh(returnStdout: true, script: 'echo $DB_HOST').trim()
         DB_DATABASE = sh(returnStdout: true, script: 'echo $DB_DATABASE').trim()
@@ -21,6 +22,19 @@ pipeline {
                         credentialsId: 'ssh-key-github'
                     ]]
                 ])
+            }
+        }
+
+        stage('Check Branch Name') {
+            steps {
+                script {
+                    if (BRANCH_NAME.startsWith('master') || BRANCH_NAME.startsWith('feature') || BRANCH_NAME.startsWith('develop') || BRANCH_NAME.startsWith('release') || BRANCH_NAME.startsWith('hotfix')) {
+                        echo "** Let's go to the Build **"
+                    } else {
+                        currentBuild.result = 'ABORTED'
+                        error('Parando o build por não estar de acordo com a nomenclatura de Branch.')
+                    }
+                }
             }
         }
 
@@ -76,45 +90,33 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def tags = sh(returnStdout: true, script: 'git tag').trim().split('\n')
+                    def tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | cut -d "/" -f 3')
+                            .trim()
+                            .split('\n')
+                            .collect { it.trim() }
 
-                    if (tags.size() == 0) {
-                        GIT_TAG = '1.0.0' // Set the initial version if no tags exist
+                    def lastTag = ''
+
+                    if (tags) {
+                        lastTag = tags.last()
+                        echo "Última tag encontrada: ${lastTag}"
                     } else {
-                        def latestTag = tags.last().replace('v', '')
-                        GIT_TAG = getIncrementedVersion(latestTag, 'PATCH') // Increment the existing version
+                        def primeiraTag = '1.0.0'
+                        echo "Nenhuma tag encontrada. Definindo a primeira tag: ${primeiraTag}"
+                        lastTag = primeiraTag
                     }
 
-                    def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
+                    def tagName = incrementTag(lastTag)
 
-                    branches.each { branch ->
-                        if (branch == 'master') {
-                            // Increment the MAJOR number for the 'master' branch
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MAJOR')
-                        } else if (branch == 'develop') {
-                            // Increment the MINOR number for the 'develop' branch
-                            GIT_TAG = getIncrementedVersion(GIT_TAG, 'MINOR')
-                        }
+                    echo "Tag que irá ser deployada: ${tagName}"
 
-                        def tagName = "${GIT_TAG}"
+                    GIT_TAG = "${tagName}"
 
-                        // Check if the tag already exists
-                        def tagExists = sh(
-                            returnStatus: true,
-                            script: "git ls-remote --tags origin refs/tags/${tagName}"
-                        )
-
-                        if (tagExists != 0) {
-                            // Tag does not exist, create the tag
-                            sshagent(credentials: ['ssh-key-github']) {
-                                sh "git config user.name 'Jenkins Devops'"
-                                sh "git config user.email '${GIT_EMAIL}'"
-                                sh "git tag ${tagName}" // Create the tag in Git
-                                sh "git push origin ${tagName}" // Push the tag to the remote repository
-                            }
-                        } else {
-                            echo "Tag ${tagName} already exists, skipping tag creation."
-                        }
+                    sshagent(credentials: ['ssh-key-github']) {
+                        sh "git config user.name 'Jenkins Devops'"
+                        sh "git config user.email '${GIT_EMAIL}'"
+                        sh "git tag ${tagName}" // Create the tag in Git
+                        sh "git push origin ${tagName}" // Push the tag to the remote repository
                     }
                 }
             }
@@ -222,30 +224,20 @@ pipeline {
     }
 }
 
-def getIncrementedVersion(version, level = 'PATCH') {
-    if (version == null || version.trim().isEmpty()) {
-        return '1.0.0'
+def incrementTag(tag) {
+    def parts = tag.split('.')
+    def major = parts[0] as int
+    def minor = parts[1] as int
+    def patch = parts[2] as int
+
+    // Incrementar o versionamento
+    if (currentBranch.startsWith('feature/')) {
+        minor++
+    } else if (currentBranch.startsWith('hotfix/')) {
+        patch++
+    } else {
+        major++
     }
 
-    def versionArray = version.tokenize('.')
-
-    switch (level) {
-        case 'MAJOR':
-            versionArray[0] = (versionArray[0] as int) + 1
-            versionArray[1] = 0
-            versionArray[2] = 0
-            break
-
-        case 'MINOR':
-            versionArray[1] = (versionArray[1] as int) + 1
-            versionArray[2] = 0
-            break
-
-        case 'PATCH':
-        default:
-            versionArray[2] = (versionArray[2] as int) + 1
-            break
-    }
-
-    return versionArray.join('.')
+    return "${major}.${minor}.${patch}"
 }
