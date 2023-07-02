@@ -74,28 +74,19 @@ pipeline {
             }
         }
 
-        stage('Remove Local Tags') {
-            steps {
-                sh 'git tag | xargs git tag -d'
-            }
-        }
-
         stage('Set Version') {
             steps {
                 script {
                     def tags = []
-                    def myTagTest = ''
                     try {
-                        sh 'git fetch --tags'
-                        myTagTest = git(
-                            credentialsId: 'ssh-key-github',
-                            url: 'git@github.com:LucasKoritar23/test-verse.git'
-                        ).lsRemote(['--tags']).split('\n')
+                        tags = sh(returnStdout: true, script: 'git tag -l')
+                            .trim()
+                            .split('\n')
+                            .collect { it.trim() }
                     } catch (Exception e) {
-                        echo "Erro ao buscar as tags: ${e.message}"
+                        echo "Erro ao buscar as tags locais: ${e.message}"
                     }
 
-                    echo "My Tag test: ${myTagTest}"
                     echo "Tags: ${tags}"
 
                     def lastTag = ''
