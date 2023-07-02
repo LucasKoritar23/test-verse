@@ -109,11 +109,13 @@ pipeline {
                         }
                     }
                     
+                    echo "Versão que irá subir: ${GIT_TAG}"
+
                     sshagent(credentials: ['ssh-key-github']) {
                         sh "git config user.name 'Jenkins Devops'"
                         sh "git config user.email '${GIT_EMAIL}'"
-                        sh "git tag ${newVersionTag}" // Create the tag in Git
-                        sh "git push origin ${newVersionTag}" // Push the tag to the remote repository
+                        sh "git tag ${GIT_TAG}" // Create the tag in Git
+                        sh "git push origin ${GIT_TAG}" // Push the tag to the remote repository
                     }
                 }
             }
