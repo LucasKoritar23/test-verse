@@ -79,14 +79,14 @@ pipeline {
                 script {
                     def tags = []
                     try {
-                        tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | cut -d "/" -f 3')
+                        tags = sh(returnStdout: true, script: 'git tag -l')
                             .trim()
                             .split('\n')
                             .collect { it.trim() }
                     } catch (Exception e) {
-                        echo "Erro ao buscar as tags do repositório: ${e.message}"
+                        echo "Erro ao buscar as tags locais: ${e.message}"
                     }
-
+                    
                     def lastTag = ''
 
                     if (tags && tags.size() > 0) {
@@ -222,7 +222,6 @@ def incrementTag(tag) {
     def minor = parts[1] as int
     def patch = parts[2] as int
 
-    // Incrementar o versionamento
     if (currentBranch.startsWith('feature/')) {
         minor++
     } else if (currentBranch.startsWith('hotfix/')) {
