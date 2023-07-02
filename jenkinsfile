@@ -220,22 +220,16 @@ pipeline {
 
 def incrementTag(tag) {
     echo "Incrementando tag: ${tag}"
-    def parts = tag.split('.')
-    def major = parts[0] as int
-    def minor = parts[1] as int
-    def patch = parts[2] as int
+    def mytag = tag.tokenize('.')
 
-    echo "Parts: ${parts}"
-    echo "major": major
-    echo "minor": minor
-    echo "patch": patch
-
-    if (currentBranch.startsWith('feature/')) {
-        minor++
-    } else if (currentBranch.startsWith('hotfix/')) {
-        patch++
-    } else {
-        major++
+    if (currentBranch == 'master') {
+        major = mytag[0].toInteger()
+        minor = mytag[1].toInteger() + 1
+        patch = 0
+    }else {
+        major = mytag[0].toInteger()
+        minor = mytag[1].toInteger()
+        patch = mytag[2].toInteger() + 1
     }
 
     echo "possible version: ${major}.${minor}.${patch}"
