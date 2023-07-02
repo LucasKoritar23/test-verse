@@ -87,10 +87,10 @@ pipeline {
                     def myTagTest = ''
                     try {
                         sh 'git fetch --tags'
-                        myTagTest = sh(
-                            returnStdout: true,
-                            script: 'git ls-remote --tags origin | awk -F "/" \'{print $3}\' | sort -V | tail -n 1'
-                        ).trim()
+                        myTagTest = git(
+                            credentialsId: 'ssh-key-github',
+                            url: 'git@github.com:LucasKoritar23/test-verse.git'
+                        ).lsRemote(['--tags']).split('\n')
                     } catch (Exception e) {
                         echo "Erro ao buscar as tags: ${e.message}"
                     }
