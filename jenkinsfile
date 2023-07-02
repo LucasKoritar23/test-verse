@@ -83,7 +83,7 @@ pipeline {
             steps {
                 script {
                     // Obtém a tag atual do Git
-                    def gitTag = sh(returnStdout: true, script: 'git describe --abbrev=0 --tags').trim()
+                    def gitTag = sh(returnStdout: true, script: 'git ls-remote --tags origin | awk \'$2 ~ /refs\\/tags\\// { print substr($2, RSTART+11) }\' | tail -n 1').trim()
                     echo "Tag atual: ${gitTag}"
 
                     // Extrai o número da versão da tag atual
