@@ -77,14 +77,19 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | cut -d "/" -f 3')
+                    def tags = []
+                    try {
+                        tags = sh(returnStdout: true, script: 'git ls-remote --tags origin | cut -d "/" -f 3')
                             .trim()
                             .split('\n')
                             .collect { it.trim() }
+                    } catch (Exception e) {
+                        echo "Erro ao buscar as tags do repositório: ${e.message}"
+                    }
 
                     def lastTag = ''
 
-                    if (tags) {
+                    if (tags && tags.size() > 0) {
                         lastTag = tags.last()
                         echo "Última tag encontrada: ${lastTag}"
                     } else {
