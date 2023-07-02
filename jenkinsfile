@@ -71,6 +71,7 @@ pipeline {
                 sh 'docker-compose -v'
                 sh 'node -v'
                 sh 'npm -v'
+                sh 'pritenv'
             }
         }
 
