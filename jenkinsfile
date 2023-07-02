@@ -85,11 +85,11 @@ pipeline {
                 script {
                     def tags = []
                     try {
-                        sh "git fetch --tags"
-                        tags = sh(returnStdout: true, script: 'git ls-remote --tags origin')
-                        .trim()
-                        .split('\n')
-                        .collect { it.split()[1].replaceAll('refs/tags/', '') }
+                        sh 'git fetch --tags'
+                        tags = sh(
+                            returnStdout: true,
+                            script: 'git ls-remote --tags origin | awk \'{print $2}\' | grep -v \'{}\' | awk -F \'/\' \'{print $3}\' | sort -V | tail -1'
+                        ).trim()
                     } catch (Exception e) {
                         echo "Erro ao buscar as tags locais: ${e.message}"
                     }
