@@ -86,6 +86,8 @@ pipeline {
                     } catch (Exception e) {
                         echo "Erro ao buscar as tags locais: ${e.message}"
                     }
+
+                    echo "Tags: ${tags}"
                     
                     def lastTag = ''
 
