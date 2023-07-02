@@ -86,7 +86,7 @@ pipeline {
                     def newTag = ''
 
                     try {
-                        versionTag = sh(returnStdout: true, script: "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1")
+                        versionTag = sh(returnStdout: true, script: "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1").trim()
 
                         // Verifica se a tag está vazia
                         if (versionTag.trim() == '') {
