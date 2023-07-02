@@ -88,7 +88,7 @@ pipeline {
                     }
 
                     echo "Tags: ${tags}"
-                    
+
                     def lastTag = ''
 
                     if (tags && tags.size() > 0) {
@@ -219,6 +219,7 @@ pipeline {
 }
 
 def incrementTag(tag) {
+    echo "Incrementando tag: ${tag}"
     def parts = tag.split('.')
     def major = parts[0] as int
     def minor = parts[1] as int
