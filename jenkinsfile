@@ -77,13 +77,12 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    sh 'printenv'
                     def tags = []
                     try {
-                        tags = sh(returnStdout: true, script: 'git tag -l')
-                            .trim()
-                            .split('\n')
-                            .collect { it.trim() }
+                        tags = sh(returnStdout: true, script: 'git ls-remote --tags origin')
+                        .trim()
+                        .split('\n')
+                        .collect { it.split()[1].replaceAll('refs/tags/', '') }
                     } catch (Exception e) {
                         echo "Erro ao buscar as tags locais: ${e.message}"
                     }
