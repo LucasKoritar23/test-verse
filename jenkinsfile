@@ -84,10 +84,11 @@ pipeline {
             steps {
                 script {
                     def tags = []
+                    def myTagTest = ''
                     try {
                         sh 'git fetch --tags'
                         def tagsCommand = "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1"
-                        def myTagTest = sh(
+                        myTagTest = sh(
                             returnStdout: true,
                             script: "bash -c '${tagsCommand}'"
                         ).trim()
