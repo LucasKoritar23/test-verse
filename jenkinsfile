@@ -71,13 +71,13 @@ pipeline {
                 sh 'docker-compose -v'
                 sh 'node -v'
                 sh 'npm -v'
-                sh 'pritenv'
             }
         }
 
         stage('Set Version') {
             steps {
                 script {
+                    sh 'pritenv'
                     def tags = []
                     try {
                         tags = sh(returnStdout: true, script: 'git tag -l')
