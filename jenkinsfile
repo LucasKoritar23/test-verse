@@ -82,34 +82,38 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def versionTag = ''
-                    def newTag = ''
+                    // Obtém a tag atual do Git
+                    def gitTag = sh(returnStdout: true, script: 'git describe --abbrev=0 --tags').trim()
+                    echo "Tag atual: ${gitTag}"
 
-                    try {
-                        versionTag = sh(returnStdout: true, script: "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1").trim()
+                    // Extrai o número da versão da tag atual
+                    def versionNumber = gitTag.replaceAll(/[^0-9.]/, '')
+                    echo "Número da versão atual: ${versionNumber}"
 
-                        // Verifica se a tag está vazia
-                        if (versionTag.trim() == '') {
-                            versionTag = '1.0.0' // Defina a primeira versão caso não haja tags
-                        }
-                    } catch (Exception e) {
-                        versionTag = '1.0.0' // Defina a primeira versão caso ocorra algum erro
+                    // Converte o número da versão em uma lista de inteiros
+                    def versionParts = versionNumber.split('\\.')
+                    def major = versionParts[0] as int
+                    def minor = versionParts[1] as int
+                    def patch = versionParts[2] as int
+
+                    // Incrementa o número da versão com base na branch
+                    if (BRANCH_NAME == 'master') {
+                        major += 1
+                        minor = 0
+                        patch = 0
+                    } else if (BRANCH_NAME.startsWith('feature/')) {
+                        minor += 1
+                        patch = 0
+                    } else {
+                        patch += 1
                     }
 
-                    echo "Tag Atual no github: ${versionTag}"
+                    // Constrói a nova versão
+                    def newVersion = "${major}.${minor}.${patch}"
+                    echo "Nova versão: ${newVersion}"
 
-                    def branches = sh(returnStdout: true, script: 'git ls-remote --heads origin | cut -d / -f 3-').trim().split('\n')
-
-                    branches.each { branch ->
-                        if (branch == 'main') {
-                            newTag = getIncrementedVersion(versionTag, 'MAJOR')
-                        } else if (branch == 'develop') {
-                            newTag = getIncrementedVersion(versionTag, 'MINOR')
-                        }
-                    }
-                    
-                    GIT_TAG = newTag
-                    echo "Versão que irá subir: ${GIT_TAG}"
+                    // Armazena a nova versão na variável de ambiente GIT_TAG
+                    GIT_TAG = newVersion
 
                     sshagent(credentials: ['ssh-key-github']) {
                         sh "git config user.name 'Jenkins Devops'"
