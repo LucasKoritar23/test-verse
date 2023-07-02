@@ -83,6 +83,7 @@ pipeline {
             steps {
                 script {
                     def versionTag = ''
+                    def newTag = ''
 
                     try {
                         versionTag = sh(returnStdout: true, script: "git ls-remote --tags origin | awk '{print \$2}' | grep -v '{}' | awk -F '/' '{print \$3}' | sort -V | tail -1")
@@ -101,12 +102,13 @@ pipeline {
 
                     branches.each { branch ->
                         if (branch == 'main') {
-                            GIT_TAG = getIncrementedVersion(versionTag, 'MAJOR')
+                            newTag = getIncrementedVersion(versionTag, 'MAJOR')
                         } else if (branch == 'develop') {
-                            GIT_TAG = getIncrementedVersion(versionTag, 'MINOR')
+                            newTag = getIncrementedVersion(versionTag, 'MINOR')
                         }
                     }
                     
+                    GIT_TAG = newTag
                     echo "Versão que irá subir: ${GIT_TAG}"
 
                     sshagent(credentials: ['ssh-key-github']) {
