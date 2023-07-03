@@ -46,10 +46,14 @@ const createSuite = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  const already = await models.getAlreadyExistsSuites(nomeSuite);
-
-  if (already > 0) {
-    return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+  try {
+    const already = await models.getAlreadyExistsSuites(nomeSuite);
+    if (already > 0) {
+      return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+    }
+  } catch (error) {
+    console.error('Erro ao criar a suite:', error);
+    res.status(500).json({ error: 'Erro ao criar a suite.' });
   }
 
   try {
@@ -76,10 +80,14 @@ const updateSuite = async (req, res) => {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  const already = await models.getAlreadyExistsSuites(nomeSuite);
-
-  if (already > 0) {
-    return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+  try {
+    const already = await models.getAlreadyExistsSuites(nomeSuite);
+    if (already > 0) {
+      return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+    }
+  } catch (error) {
+    console.error('Erro ao editar a suite:', error);
+    res.status(500).json({ error: 'Erro ao editar a suite.' });
   }
 
   try {

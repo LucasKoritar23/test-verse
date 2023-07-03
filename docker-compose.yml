@@ -4,7 +4,6 @@ networks:
   api:
   db:
 
-
 services:
   db:
     image: postgres:latest

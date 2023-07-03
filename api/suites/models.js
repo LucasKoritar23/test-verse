@@ -76,7 +76,7 @@ const getAlreadyExistsSuites = async (nameSuite) => {
     const { rows } = await pool.query(query, [nameSuite]);
     return rows[0]['count'];
   } catch (error) {
-    throw new Error('Erro ao obter as suites: ' + error);
+    return new Error('Erro ao obter as suites: ' + error);
   }
 };
 
