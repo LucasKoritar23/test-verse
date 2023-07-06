@@ -27,13 +27,15 @@ const nomeTestSchema = Joi.string()
     'string.pattern.base': 'Campo nomeTeste não pode ser vazio ou consistir apenas de espaços em branco.',
   });
 
-const ultimaExecSchema = Joi.date()
+const ultimaExecSchema = Joi.string()
   .allow(null)
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{1,2}:\d{1,2}:\d{1,2}$/)
   .empty(null)
   .messages({
     'any.required': 'Campo ultimaExec deve estar preenchido.',
     'date.base': 'Campo ultimaExec deve ser uma data válida.',
     'date.empty': 'Campo ultimaExec não pode ser vazio ou consistir apenas de espaços em branco.',
+    'string.pattern.base': 'Campo ultimaExec deve estar no formato yyyy-MM-DDTH:m:s'
   });
 
 const statusUltimaExecSchema = Joi.string()
@@ -44,10 +46,12 @@ const statusUltimaExecSchema = Joi.string()
     'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.',
   });
 
-const idSuiteSchema = Joi.number().integer().required().messages({
-  'any.required': 'Parâmetro id é obrigatório.',
-  'number.base': 'Parâmetro id deve ser um número inteiro.',
-  'number.integer': 'Parâmetro id deve ser um número inteiro.',
+const idSuiteSchema = Joi.number().integer().positive().strict().required().messages({
+  'any.required': 'Campo idSuite é obrigatório.',
+  'number.base': 'Campo idSuite deve ser um número inteiro.',
+  'number.integer': 'Campo idSuite deve ser um número inteiro.',
+  'number.negative': 'Campo idSuite seve ser maior que zero.',
+  'number.strict': 'O campo deve ser um número inteiro positivo.'
 });
 
 const statusAtualSchema = Joi.string()
