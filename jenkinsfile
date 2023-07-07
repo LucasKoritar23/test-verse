@@ -77,30 +77,8 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    def tags = []
-                    try {
-                        tags = sh(returnStdout: true, script: 'git tag -l')
-                            .trim()
-                            .split('\n')
-                            .collect { it.trim() }
-                    } catch (Exception e) {
-                        echo "Erro ao buscar as tags locais: ${e.message}"
-                    }
-
-                    echo "Tags: ${tags}"
-
-                    def lastTag = '1.0.0'
-
-                    if (tags == []) {
-                        def primeiraTag = '1.0.0'
-                        echo "Nenhuma tag encontrada. Definindo a primeira tag: ${primeiraTag}"
-                        lastTag = primeiraTag
-                    } else {
-                        lastTag = tags.last()
-                        echo "Última tag encontrada: ${lastTag}"
-                    }
-
-                    def tagName = incrementTag(lastTag)
+                    
+                    def tagName = '1.0.0'
 
                     echo "Tag que irá ser deployada: ${tagName}"
 
