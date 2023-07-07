@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const Joi = require('joi');
+const { DateValidateUtils } = require('../utils/dateValidateUtils');
 require('dotenv').config();
 
 // Configuração do banco de dados PostgreSQL
@@ -31,6 +32,13 @@ const ultimaExecSchema = Joi.string()
   .allow(null)
   .regex(/^\d{4}-\d{2}-\d{2}T\d{1,2}:\d{1,2}:\d{1,2}$/)
   .empty(null)
+  .custom((value, helpers) => {
+    const fieldName = helpers.state.path[0]
+    const validationResult = new DateValidateUtils().validateDate(fieldName, value);
+    if (!validationResult.valid) {
+      return helpers.message(validationResult.message);
+    }
+  })
   .messages({
     'any.required': 'Campo ultimaExec deve estar preenchido.',
     'date.base': 'Campo ultimaExec deve ser uma data válida.',
