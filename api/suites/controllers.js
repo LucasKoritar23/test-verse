@@ -3,8 +3,23 @@ const models = require('./models');
 // Controlador para obter todas as suites
 const getAllSuites = async (req, res) => {
   try {
-    const suites = await models.getAllSuites();
-    res.json(suites);
+    const pageSize = 50;
+    const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+    const allSuites = await models.getAllSuites();
+    const totalItems = allSuites.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = currentPage * pageSize;
+    const items = allSuites.slice(startIndex, endIndex);
+    const response = {
+      currentPage,
+      totalPages,
+      pageSize,
+      totalItems,
+      items,
+    };
+
+    res.json(response);
   } catch (error) {
     console.error('Erro ao obter as suites:', error);
     res.status(500).json({ error: 'Erro ao obter as suites.' });
