@@ -89,7 +89,7 @@ pipeline {
 
                     echo "Tags: ${tags}"
 
-                    def lastTag = ''
+                    def lastTag = '1.0.0'
 
                     if (tags == []) {
                         def primeiraTag = '1.0.0'
