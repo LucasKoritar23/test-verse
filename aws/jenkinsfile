@@ -50,34 +50,34 @@ pipeline {
             }
         }
 
-        stage('Check Folder Exist') {
-            steps {
-                script {
-                    def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
-                    sh "chmod 400 ${pemFile}"
+        // stage('Check Folder Exist') {
+        //     steps {
+        //         script {
+        //             def pemFile = '/var/jenkins_home/workspace/creds/test-verse-api.pem'
+        //             sh "chmod 400 ${pemFile}"
 
-                    // Verifica se a pasta existe
-                    def dirExists = sh(
-                        script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'test -d /home/ec2-user/test-verse && echo exists'",
-                        returnStdout: true
-                    ).trim()
+        //             // Verifica se a pasta existe
+        //             def dirExists = sh(
+        //                 script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'test -d /home/ec2-user/test-verse && echo exists'",
+        //                 returnStdout: true
+        //             ).trim()
 
-                    if (dirExists == 'exists') {
-                        echo 'Folder Exist!!!'
-                        sh(
-                            script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
-                            returnStdout: true
-                        )
-                        sh(
-                            script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'rm -R /home/ec2-user/test-verse'",
-                            returnStdout: true
-                        )
-                    } else {
-                        echo 'A pasta não existe.'
-                    }
-                }
-            }
-        }
+        //             if (dirExists == 'exists') {
+        //                 echo 'Folder Exist!!!'
+        //                 sh(
+        //                     script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'cd /home/ec2-user/test-verse && docker-compose down'",
+        //                     returnStdout: true
+        //                 )
+        //                 sh(
+        //                     script: "ssh -i '${pemFile}' ec2-user@${EC2_HOST} 'rm -R /home/ec2-user/test-verse'",
+        //                     returnStdout: true
+        //                 )
+        //             } else {
+        //                 echo 'A pasta não existe.'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Checkout') {
             steps {
