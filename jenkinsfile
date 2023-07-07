@@ -78,7 +78,7 @@ pipeline {
             steps {
                 script {
                     
-                    def tagName = '1.0.0'
+                    def tagName = '1.0.1'
 
                     echo "Tag que irá ser deployada: ${tagName}"
 
