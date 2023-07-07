@@ -91,13 +91,13 @@ pipeline {
 
                     def lastTag = ''
 
-                    if (tags.size() > 0) {
-                        lastTag = tags.last()
-                        echo "Última tag encontrada: ${lastTag}"
-                    } else {
+                    if (tags == []) {
                         def primeiraTag = '1.0.0'
                         echo "Nenhuma tag encontrada. Definindo a primeira tag: ${primeiraTag}"
                         lastTag = primeiraTag
+                    } else {
+                        lastTag = tags.last()
+                        echo "Última tag encontrada: ${lastTag}"
                     }
 
                     def tagName = incrementTag(lastTag)
