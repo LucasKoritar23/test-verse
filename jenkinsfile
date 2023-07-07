@@ -91,7 +91,7 @@ pipeline {
 
                     def lastTag = ''
 
-                    if (tags && tags.size() > 0) {
+                    if (tags.size() > 0) {
                         lastTag = tags.last()
                         echo "Última tag encontrada: ${lastTag}"
                     } else {
