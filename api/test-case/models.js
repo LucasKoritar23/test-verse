@@ -54,13 +54,17 @@ const statusUltimaExecSchema = Joi.string()
     'any.only': 'Campo statusUltimaExec deve ter um valor válido. {#valids}.',
   });
 
-const idSuiteSchema = Joi.number().integer().positive().strict().required().messages({
-  'any.required': 'Campo idSuite é obrigatório.',
-  'number.base': 'Campo idSuite deve ser um número inteiro.',
-  'number.integer': 'Campo idSuite deve ser um número inteiro.',
-  'number.negative': 'Campo idSuite seve ser maior que zero.',
-  'number.strict': 'O campo deve ser um número inteiro positivo.'
-});
+const idSuiteSchema = Joi.number().integer()
+  .positive()
+  .strict()
+  .required()
+  .messages({
+    'any.required': 'Campo idSuite é obrigatório.',
+    'number.base': 'Campo idSuite deve ser um número inteiro.',
+    'number.integer': 'Campo idSuite deve ser um número inteiro.',
+    'number.negative': 'Campo idSuite seve ser maior que zero.',
+    'number.strict': 'O campo deve ser um número inteiro positivo.'
+  });
 
 const statusAtualSchema = Joi.string()
   .valid('running', 'success', 'failed', 'blocked', 'new')
@@ -85,13 +89,29 @@ const nomeExecutorSchema = Joi.string()
     'string.pattern.base': 'Campo nomeExecutor não pode ser vazio ou consistir apenas de espaços em branco.',
   });
 
+const zipEvidenciaSchema = Joi.string()
+  .min(2)
+  .max(255)
+  .trim()
+  .required()
+  .empty()
+  .pattern(/^\S.*\S$/)
+  .messages({
+    'string.base': 'Campo zipEvidencia deve ser uma string.',
+    'string.min': 'Campo zipEvidencia deve ter pelo menos {#limit} caracteres.',
+    'string.max': 'Campo zipEvidencia não deve ter mais de {#limit} caracteres.',
+    'any.required': 'Campo zipEvidencia é obrigatório.',
+    'string.empty': 'Campo zipEvidencia não pode ser vazio ou consistir apenas de espaços em branco.',
+    'string.pattern.base': 'Campo zipEvidencia não pode ser vazio ou consistir apenas de espaços em branco.',
+  });
+
 const testCaseSchema = Joi.object({
   nomeTeste: nomeTestSchema,
   ultimaExec: ultimaExecSchema,
   statusUltimaExec: statusUltimaExecSchema,
   idSuite: idSuiteSchema,
   statusAtual: statusAtualSchema,
-  zipEvidencia: Joi.string().allow(null),
+  zipEvidencia: zipEvidenciaSchema,
   nomeExecutor: nomeExecutorSchema,
 });
 
