@@ -1,10 +1,15 @@
+const { PaginationUtils } = require('../utils/paginationUtils');
 const models = require('./models');
 
 // Controlador para obter todos os casos de teste
 const getAllTestCases = async (req, res) => {
   try {
+    const pageSize = 50;
+    const currentPage = req.query.page ? parseInt(req.query.page) : 1;
     const testCases = await models.getAllTestCases();
-    res.json(testCases);
+    const paginationUtils = new PaginationUtils();
+    const response = await paginationUtils.pagination(currentPage, pageSize, testCases);
+    res.json(response);
   } catch (error) {
     console.error('Erro ao buscar os casos de teste:', error);
     res.status(500).json({ error: 'Erro ao buscar os casos de teste.' });
@@ -56,7 +61,7 @@ const updateTestCase = async (req, res) => {
   if (error) {
     return res.status(400).json({ error: error.details[0].message });
   }
-  
+
   try {
     const testCase = await models.updateTestCase(id, req.body);
     res.json(testCase);
@@ -73,7 +78,7 @@ const deleteTestCase = async (req, res) => {
   if (validationId) {
     return res.status(400).json({ error: validationId.details[0].message });
   }
-  
+
   try {
     await models.deleteTestCase(id);
     res.json({ message: 'Caso de teste excluído com sucesso.' });
