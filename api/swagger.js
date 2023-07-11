@@ -18,10 +18,14 @@ const options = {
       {
         name: 'Test Cases API',
         description: 'API endpoints para gerenciamento de casos de testes',
+      },
+      {
+        name: 'Steps API',
+        description: 'API endpoints para gerenciamento de steps',
       }
     ],
   },
-  apis: [`${__dirname}/suites/routes.js`, `${__dirname}/test-case/routes.js`], // Caminho para o arquivo de rotas
+  apis: [`${__dirname}/suites/routes.js`, `${__dirname}/test-case/routes.js`, `${__dirname}/step-tests/routes.js`], // Caminho para o arquivo de rotas
 };
 
 const specs = swaggerJsdoc(options);

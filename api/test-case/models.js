@@ -125,7 +125,6 @@ const schemaId = Joi.object({
   id: id,
 });
 
-
 const getAllTestCases = async () => {
   try {
     const query = 'SELECT * FROM teste_case';

@@ -12,6 +12,10 @@
     {
       "name": "Test Cases API",
       "description": "API endpoints para gerenciamento de casos de testes"
+    },
+    {
+      "name": "Steps API",
+      "description": "API endpoints para gerenciamento de steps"
     }
   ],
   "paths": {
@@ -184,7 +188,7 @@
         "tags": [
           "Test Cases API"
         ],
-        "summary": "Obter todos os casos de teste",
+        "summary": "Obter todos os casos de teste.",
         "description": "Retorna uma lista de todos os casos de teste.",
         "responses": {
           "200": {
@@ -229,13 +233,13 @@
         "tags": [
           "Test Cases API"
         ],
-        "summary": "Criar um novo caso de teste",
+        "summary": "Criar um novo caso de teste.",
         "description": "Cria um novo caso de teste com os dados fornecidos.",
         "parameters": [
           {
             "in": "body",
             "name": "testCase",
-            "description": "Objeto do caso de teste a ser criado",
+            "description": "Objeto do caso de teste a ser criado.",
             "required": true,
             "schema": {
               "type": "object",
@@ -268,7 +272,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Caso de teste criado com sucesso",
+            "description": "Caso de teste criado com sucesso.",
             "schema": {
               "type": "object",
               "properties": {
@@ -308,13 +312,13 @@
         "tags": [
           "Test Cases API"
         ],
-        "summary": "Obter um caso de teste pelo ID",
+        "summary": "Obter um caso de teste pelo ID.",
         "description": "Retorna um caso de teste com base no ID fornecido.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
-            "description": "ID do caso de teste a ser obtido",
+            "description": "ID do caso de teste a ser obtido.",
             "required": true,
             "type": "integer"
           }
@@ -356,7 +360,7 @@
         }
       },
       "put": {
-        "summary": "Atualizar um caso de teste",
+        "summary": "Atualizar um caso de teste.",
         "tags": [
           "Test Cases API"
         ],
@@ -365,14 +369,14 @@
           {
             "in": "path",
             "name": "id",
-            "description": "ID do caso de teste a ser atualizado",
+            "description": "ID do caso de teste a ser atualizado.",
             "required": true,
             "type": "integer"
           },
           {
             "in": "body",
             "name": "updatedTestCase",
-            "description": "Objeto do caso de teste atualizado",
+            "description": "Objeto do caso de teste atualizado.",
             "required": true,
             "schema": {
               "type": "object",
@@ -405,7 +409,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Caso de teste atualizado com sucesso",
+            "description": "Caso de teste atualizado com sucesso.",
             "schema": {
               "type": "object",
               "properties": {
@@ -443,20 +447,284 @@
         "tags": [
           "Test Cases API"
         ],
-        "summary": "Excluir um caso de teste",
+        "summary": "Excluir um caso de teste.",
         "description": "Exclui um caso de teste existente com base no ID fornecido.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
-            "description": "ID do caso de teste a ser excluído",
+            "description": "ID do caso de teste a ser excluído.",
             "required": true,
             "type": "integer"
           }
         ],
         "responses": {
           "204": {
-            "description": "Caso de teste excluído com sucesso"
+            "description": "Caso de teste excluído com sucesso."
+          }
+        }
+      }
+    },
+    "/test-steps": {
+      "get": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Obtém todas as suites.",
+        "responses": {
+          "200": {
+            "description": "Array contendo todas as suites."
+          },
+          "500": {
+            "description": "Erro ao obter as suites."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Cria um novo step.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeStep": {
+                    "type": "string"
+                  },
+                  "ultimaExec": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string",
+                    "enum": [
+                      "running",
+                      "success",
+                      "failed",
+                      "blocked",
+                      "new"
+                    ]
+                  },
+                  "idSuite": {
+                    "type": "integer"
+                  },
+                  "idTestCase": {
+                    "type": "integer"
+                  },
+                  "statusAtual": {
+                    "type": "string",
+                    "enum": [
+                      "running",
+                      "success",
+                      "failed",
+                      "blocked",
+                      "new"
+                    ]
+                  },
+                  "nomeExecutor": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto contendo o step criado."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "500": {
+            "description": "Erro ao criar o step."
+          }
+        }
+      }
+    },
+    "/test-steps/id/{id}": {
+      "get": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Obtém um step por ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID do step."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo o step encontrado."
+          },
+          "404": {
+            "description": "Step não encontrado."
+          },
+          "500": {
+            "description": "Erro ao obter o step."
+          }
+        }
+      }
+    },
+    "/test-steps/name/{name}": {
+      "get": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Obtém um step por nome.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Nome do step."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo o step encontrado."
+          },
+          "404": {
+            "description": "Step não encontrado."
+          },
+          "500": {
+            "description": "Erro ao obter o step."
+          }
+        }
+      }
+    },
+    "/test-steps/test/{id}": {
+      "get": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Obtém um step pelo id do caso de teste.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Nome do step."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo o step encontrado."
+          },
+          "404": {
+            "description": "Step não encontrado."
+          },
+          "500": {
+            "description": "Erro ao obter o step."
+          }
+        }
+      }
+    },
+    "/test-steps/{id}": {
+      "put": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Edita um step.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nomeStep": {
+                    "type": "string"
+                  },
+                  "ultimaExec": {
+                    "type": "string"
+                  },
+                  "statusUltimaExec": {
+                    "type": "string",
+                    "enum": [
+                      "running",
+                      "success",
+                      "failed",
+                      "blocked",
+                      "new"
+                    ]
+                  },
+                  "idSuite": {
+                    "type": "integer"
+                  },
+                  "idTestCase": {
+                    "type": "integer"
+                  },
+                  "statusAtual": {
+                    "type": "string",
+                    "enum": [
+                      "running",
+                      "success",
+                      "failed",
+                      "blocked",
+                      "new"
+                    ]
+                  },
+                  "nomeExecutor": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto contendo o step editado."
+          },
+          "400": {
+            "description": "Dados inválidos fornecidos."
+          },
+          "500": {
+            "description": "Erro ao editar o step."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Steps API"
+        ],
+        "summary": "Exclui um step existente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID do step."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto contendo o step excluído."
+          },
+          "404": {
+            "description": "Step não encontrado."
+          },
+          "500": {
+            "description": "Erro ao excluir o step."
           }
         }
       }

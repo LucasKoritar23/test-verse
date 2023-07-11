@@ -17,7 +17,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *   get:
  *     tags: 
  *       - Test Cases API
- *     summary: Obter todos os casos de teste
+ *     summary: Obter todos os casos de teste.
  *     description: Retorna uma lista de todos os casos de teste.
  *     responses:
  *       200:
@@ -48,12 +48,12 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *   post:
  *     tags: 
  *       - Test Cases API
- *     summary: Criar um novo caso de teste
+ *     summary: Criar um novo caso de teste.
  *     description: Cria um novo caso de teste com os dados fornecidos.
  *     parameters:
  *       - in: body
  *         name: testCase
- *         description: Objeto do caso de teste a ser criado
+ *         description: Objeto do caso de teste a ser criado.
  *         required: true
  *         schema:
  *           type: object
@@ -75,7 +75,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *               type: string
  *     responses:
  *       201:
- *         description: Caso de teste criado com sucesso
+ *         description: Caso de teste criado com sucesso.
  *         schema:
  *           type: object
  *           properties:
@@ -104,12 +104,12 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *   get:
  *     tags: 
  *       - Test Cases API
- *     summary: Obter um caso de teste pelo ID
+ *     summary: Obter um caso de teste pelo ID.
  *     description: Retorna um caso de teste com base no ID fornecido.
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID do caso de teste a ser obtido
+ *         description: ID do caso de teste a ser obtido.
  *         required: true
  *         type: integer
  *     responses:
@@ -137,19 +137,19 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *               type: string
  *
  *   put:
- *     summary: Atualizar um caso de teste
+ *     summary: Atualizar um caso de teste.
  *     tags: 
  *       - Test Cases API
  *     description: Atualiza um caso de teste existente com os dados fornecidos.
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID do caso de teste a ser atualizado
+ *         description: ID do caso de teste a ser atualizado.
  *         required: true
  *         type: integer
  *       - in: body
  *         name: updatedTestCase
- *         description: Objeto do caso de teste atualizado
+ *         description: Objeto do caso de teste atualizado.
  *         required: true
  *         schema:
  *           type: object
@@ -171,7 +171,7 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *               type: string
  *     responses:
  *       200:
- *         description: Caso de teste atualizado com sucesso
+ *         description: Caso de teste atualizado com sucesso.
  *         schema:
  *           type: object
  *           properties:
@@ -196,17 +196,17 @@ const { getAllTestCases, getTestCaseById, createTestCase, updateTestCase, delete
  *   delete:
  *     tags: 
  *       - Test Cases API
- *     summary: Excluir um caso de teste
+ *     summary: Excluir um caso de teste.
  *     description: Exclui um caso de teste existente com base no ID fornecido.
  *     parameters:
  *       - in: path
  *         name: id
- *         description: ID do caso de teste a ser excluído
+ *         description: ID do caso de teste a ser excluído.
  *         required: true
  *         type: integer
  *     responses:
  *       204:
- *         description: Caso de teste excluído com sucesso
+ *         description: Caso de teste excluído com sucesso.
  */
 
 router.get('/', getAllTestCases);

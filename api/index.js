@@ -1,6 +1,7 @@
 const express = require('express');
 const routesSuites = require('./suites/routes');
 const routesTestCase = require('./test-case/routes');
+const routesTestStep = require('./step-tests/routes');
 const swagger = require('./swagger');
 const prometheusApiMetrics = require('prometheus-api-metrics');
 
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
 
 app.use('/suites', routesSuites);
 app.use('/test-cases', routesTestCase);
+app.use('/test-steps', routesTestStep);
 
 swagger(app);
 
