@@ -1,5 +1,6 @@
 const { PaginationUtils } = require('../utils/paginationUtils');
 const models = require('./models');
+const { v4: uuidv4 } = require('uuid');
 
 // Controlador para obter todos os steps
 const getAllStepTests = async (req, res) => {
@@ -12,7 +13,7 @@ const getAllStepTests = async (req, res) => {
         res.json(response);
     } catch (error) {
         console.error('Erro ao buscar os steps:', error);
-        res.status(500).json({ error: 'Erro ao buscar os os steps.' });
+        res.status(500).json({ uuid: uuidv4(), error: 'Erro ao buscar os os steps.' });
     }
 };
 
@@ -21,7 +22,7 @@ const getTestStepById = async (req, res) => {
     const { id } = req.params;
     const { error: validationId } = models.schemaId.validate({ id });
     if (validationId) {
-        return res.status(400).json({ error: validationId.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
     }
 
     try {
@@ -29,7 +30,7 @@ const getTestStepById = async (req, res) => {
         res.json(testCase);
     } catch (error) {
         console.error('Step não encontrado:', error);
-        res.status(404).json({ error: 'Step não encontrado.' });
+        res.status(404).json({ uuid: uuidv4(), error: 'Step não encontrado.' });
     }
 };
 
@@ -38,7 +39,7 @@ const getTestStepByName = async (req, res) => {
     const { name } = req.params;
     const { error: validationName } = models.schemaName.validate({ name });
     if (validationName) {
-        return res.status(400).json({ error: validationName.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: validationName.details[0].message });
     }
 
     try {
@@ -46,7 +47,7 @@ const getTestStepByName = async (req, res) => {
         res.json(testCase);
     } catch (error) {
         console.error('Step não encontrado:', error);
-        res.status(404).json({ error: 'Step não encontrado.' });
+        res.status(404).json({ uuid: uuidv4(), error: 'Step não encontrado.' });
     }
 };
 
@@ -55,7 +56,7 @@ const getTestStepByTestId = async (req, res) => {
     const { id } = req.params;
     const { error: validationId } = models.schemaId.validate({ id });
     if (validationId) {
-        return res.status(400).json({ error: validationId.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
     }
 
     try {
@@ -63,7 +64,7 @@ const getTestStepByTestId = async (req, res) => {
         res.json(testCase);
     } catch (error) {
         console.error('Step não encontrado:', error);
-        res.status(404).json({ error: 'Step não encontrado.' });
+        res.status(404).json({ uuid: uuidv4(), error: 'Step não encontrado.' });
     }
 };
 
@@ -71,7 +72,7 @@ const getTestStepByTestId = async (req, res) => {
 const createTestStep = async (req, res) => {
     const { error } = models.testStepCaseSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
     }
 
     try {
@@ -79,7 +80,7 @@ const createTestStep = async (req, res) => {
         res.status(201).json(testCase);
     } catch (error) {
         console.error('Erro ao criar o step:', error);
-        res.status(500).json({ error: 'Erro ao criar step.' });
+        res.status(500).json({ uuid: uuidv4(), error: 'Erro ao criar step.' });
     }
 };
 
@@ -88,12 +89,12 @@ const updateTestStep = async (req, res) => {
     const { id } = req.params;
     const { error: validationId } = models.schemaId.validate({ id });
     if (validationId) {
-        return res.status(400).json({ error: validationId.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
     }
 
     const { error } = models.testStepCaseSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
     }
 
     try {
@@ -101,7 +102,7 @@ const updateTestStep = async (req, res) => {
         res.json(testCase);
     } catch (error) {
         console.error('Step não encontrado:', error);
-        res.status(404).json({ error: 'Step não encontrado.' });
+        res.status(404).json({ uuid: uuidv4(), error: 'Step não encontrado.' });
     }
 };
 
@@ -110,7 +111,7 @@ const deleteTestStep = async (req, res) => {
     const { id } = req.params;
     const { error: validationId } = models.schemaId.validate({ id });
     if (validationId) {
-        return res.status(400).json({ error: validationId.details[0].message });
+        return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
     }
 
     try {
@@ -118,7 +119,7 @@ const deleteTestStep = async (req, res) => {
         res.json({ message: 'Step excluído com sucesso.' });
     } catch (error) {
         console.error('Step não encontrado:', error);
-        res.status(404).json({ error: 'Step não encontrado.' });
+        res.status(404).json({ uuid: uuidv4(), error: 'Step não encontrado.' });
     }
 };
 

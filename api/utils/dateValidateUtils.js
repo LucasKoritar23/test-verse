@@ -2,7 +2,7 @@ const moment = require('moment');
 
 class DateValidateUtils {
     validateDate(fieldName, date) {
-        const format = 'YYYY-MM-DDTH:m:s';
+        const format = 'YYYY-MM-DDTHH:mm:ss';
         let dateValidated = {
         }
         if (!moment(date, format, true).isValid()) {

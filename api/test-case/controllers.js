@@ -1,5 +1,6 @@
 const { PaginationUtils } = require('../utils/paginationUtils');
 const models = require('./models');
+const { v4: uuidv4 } = require('uuid');
 
 // Controlador para obter todos os casos de teste
 const getAllTestCases = async (req, res) => {
@@ -12,7 +13,7 @@ const getAllTestCases = async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Erro ao buscar os casos de teste:', error);
-    res.status(500).json({ error: 'Erro ao buscar os casos de teste.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao buscar os casos de teste.' });
   }
 };
 
@@ -21,7 +22,7 @@ const getTestCaseById = async (req, res) => {
   const { id } = req.params;
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   try {
@@ -29,7 +30,7 @@ const getTestCaseById = async (req, res) => {
     res.json(testCase);
   } catch (error) {
     console.error('Caso de teste não encontrado:', error);
-    res.status(404).json({ error: 'Caso de teste não encontrado.' });
+    res.status(404).json({ uuid: uuidv4(), error: 'Caso de teste não encontrado.' });
   }
 };
 
@@ -37,7 +38,7 @@ const getTestCaseById = async (req, res) => {
 const createTestCase = async (req, res) => {
   const { error } = models.testCaseSchema.validate(req.body);
   if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
   }
 
   try {
@@ -45,7 +46,7 @@ const createTestCase = async (req, res) => {
     res.status(201).json(testCase);
   } catch (error) {
     console.error('Erro ao criar o caso de teste:', error);
-    res.status(500).json({ error: 'Erro ao criar o caso de teste.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao criar o caso de teste.' });
   }
 };
 
@@ -54,12 +55,12 @@ const updateTestCase = async (req, res) => {
   const { id } = req.params;
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   const { error } = models.testCaseSchema.validate(req.body);
   if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
   }
 
   try {
@@ -67,7 +68,7 @@ const updateTestCase = async (req, res) => {
     res.json(testCase);
   } catch (error) {
     console.error('Caso de teste não encontrado:', error);
-    res.status(404).json({ error: 'Caso de teste não encontrado.' });
+    res.status(404).json({ uuid: uuidv4(), error: 'Caso de teste não encontrado.' });
   }
 };
 
@@ -76,7 +77,7 @@ const deleteTestCase = async (req, res) => {
   const { id } = req.params;
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   try {
@@ -84,7 +85,7 @@ const deleteTestCase = async (req, res) => {
     res.json({ message: 'Caso de teste excluído com sucesso.' });
   } catch (error) {
     console.error('Caso de teste não encontrado:', error);
-    res.status(404).json({ error: 'Caso de teste não encontrado.' });
+    res.status(404).json({ uuid: uuidv4(), error: 'Caso de teste não encontrado.' });
   }
 };
 

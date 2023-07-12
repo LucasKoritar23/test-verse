@@ -4,9 +4,13 @@ const routesTestCase = require('./test-case/routes');
 const routesTestStep = require('./step-tests/routes');
 const swagger = require('./swagger');
 const prometheusApiMetrics = require('prometheus-api-metrics');
+const cors = require('cors');
 
 const app = express();
 const port = 3001; // Porta do microserviço suites
+
+// Enable CORS
+app.use(cors());
 
 app.use(express.json());
 

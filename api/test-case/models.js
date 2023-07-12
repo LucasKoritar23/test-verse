@@ -43,7 +43,7 @@ const ultimaExecSchema = Joi.string()
     'any.required': 'Campo ultimaExec deve estar preenchido.',
     'date.base': 'Campo ultimaExec deve ser uma data válida.',
     'date.empty': 'Campo ultimaExec não pode ser vazio ou consistir apenas de espaços em branco.',
-    'string.pattern.base': 'Campo ultimaExec deve estar no formato yyyy-MM-DDTH:m:s'
+    'string.pattern.base': 'Campo ultimaExec deve estar no formato YYYY-MM-DDTHH:MM:SS'
   });
 
 const statusUltimaExecSchema = Joi.string()
@@ -93,7 +93,7 @@ const zipEvidenciaSchema = Joi.string()
   .min(2)
   .max(255)
   .trim()
-  .required()
+  .allow(null)
   .empty()
   .pattern(/^\S.*\S$/)
   .messages({

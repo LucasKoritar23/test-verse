@@ -1,5 +1,6 @@
 const { PaginationUtils } = require('../utils/paginationUtils');
 const models = require('./models');
+const { v4: uuidv4 } = require('uuid');
 
 // Controlador para obter todas as suites
 const getAllSuites = async (req, res) => {
@@ -12,7 +13,7 @@ const getAllSuites = async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Erro ao obter as suites:', error);
-    res.status(500).json({ error: 'Erro ao obter as suites.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao obter as suites.' });
   }
 };
 
@@ -21,20 +22,20 @@ const getSuiteById = async (req, res) => {
   const { id } = req.params;
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   try {
     const suite = await models.getSuiteById(id);
 
     if (!suite) {
-      res.status(404).json({ error: 'Suite não encontrada.' });
+      res.status(404).json({ uuid: uuidv4(), error: 'Suite não encontrada.' });
     } else {
       res.json(suite);
     }
   } catch (error) {
     console.error('Erro ao obter a suite:', error);
-    res.status(500).json({ error: 'Erro ao obter a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao obter a suite.' });
   }
 };
 
@@ -48,17 +49,17 @@ const createSuite = async (req, res) => {
 
   const { error } = models.schema.validate({ nomeSuite, statusUltimaExec, statusAtual });
   if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
   }
 
   try {
     const already = await models.getAlreadyExistsSuites(nomeSuite);
     if (already > 0) {
-      return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+      return res.status(400).json({ uuid: uuidv4(), error: 'Já existe uma suite com o nome inserido.' });
     }
   } catch (error) {
     console.error('Erro ao criar a suite:', error);
-    res.status(500).json({ error: 'Erro ao criar a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao criar a suite.' });
   }
 
   try {
@@ -66,7 +67,7 @@ const createSuite = async (req, res) => {
     res.status(201).json(newSuite);
   } catch (error) {
     console.error('Erro ao criar a suite:', error);
-    res.status(500).json({ error: 'Erro ao criar a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao criar a suite.' });
   }
 };
 
@@ -77,35 +78,35 @@ const updateSuite = async (req, res) => {
 
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   const { error } = models.schema.validate({ nomeSuite, statusUltimaExec, statusAtual });
   if (error) {
-    return res.status(400).json({ error: error.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: error.details[0].message });
   }
 
   try {
     const already = await models.getAlreadyExistsSuites(nomeSuite);
     if (already > 0) {
-      return res.status(400).json({ error: 'Já existe uma suite com o nome inserido.' });
+      return res.status(400).json({ uuid: uuidv4(), error: 'Já existe uma suite com o nome inserido.' });
     }
   } catch (error) {
     console.error('Erro ao editar a suite:', error);
-    res.status(500).json({ error: 'Erro ao editar a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao editar a suite.' });
   }
 
   try {
     const updatedSuite = await models.updateSuite(id, nomeSuite, statusUltimaExec, statusAtual);
 
     if (!updatedSuite) {
-      res.status(404).json({ error: 'Suite não encontrada.' });
+      res.status(404).json({ uuid: uuidv4(), error: 'Suite não encontrada.' });
     } else {
       res.json(updatedSuite);
     }
   } catch (error) {
     console.error('Erro ao atualizar a suite:', error);
-    res.status(500).json({ error: 'Erro ao atualizar a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao atualizar a suite.' });
   }
 };
 
@@ -114,20 +115,20 @@ const deleteSuite = async (req, res) => {
   const { id } = req.params;
   const { error: validationId } = models.schemaId.validate({ id });
   if (validationId) {
-    return res.status(400).json({ error: validationId.details[0].message });
+    return res.status(400).json({ uuid: uuidv4(), error: validationId.details[0].message });
   }
 
   try {
     const deletedSuite = await models.deleteSuite(id);
 
     if (!deletedSuite) {
-      res.status(404).json({ error: 'Suite não encontrada.' });
+      res.status(404).json({ uuid: uuidv4(), error: 'Suite não encontrada.' });
     } else {
       res.json({ message: 'Suite excluída com sucesso.' });
     }
   } catch (error) {
     console.error('Erro ao excluir a suite:', error);
-    res.status(500).json({ error: 'Erro ao excluir a suite.' });
+    res.status(500).json({ uuid: uuidv4(), error: 'Erro ao excluir a suite.' });
   }
 };
 
