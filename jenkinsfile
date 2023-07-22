@@ -99,7 +99,7 @@ pipeline {
                         lastTag = '1.0.0'
                     }
 
-                    def tagName = '1.0.0'
+                    def tagName = incrementTag(lastTag)
 
                     echo "Tag que irá ser deployada: ${tagName}"
 
