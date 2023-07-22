@@ -77,7 +77,6 @@ const name = Joi.string()
         'string.pattern.base': 'Campo nomeStep não pode ser vazio ou consistir apenas de espaços em branco.',
     });
 
-
 const id = Joi.number().integer().required().messages({
     'any.required': 'Parâmetro id é obrigatório.',
     'number.base': 'Parâmetro id deve ser um número inteiro.',
@@ -216,7 +215,7 @@ const createTestStep = async (testStep) => {
 const updateTestStep = async (id, testStep) => {
     try {
         const query =
-            'UPDATE test_step SET nome_step = $1, ultima_exec = $2, status_ultima_exec = $3, id_suite = $4, id_test_case = $5, status_atual = $6, nome_executor = $7, data_edicao = CURRENT_TIMESTAMP WHERE id_teste = $8 RETURNING *';
+            'UPDATE test_step SET nome_step = $1, ultima_exec = $2, status_ultima_exec = $3, id_suite = $4, id_test_case = $5, status_atual = $6, nome_executor = $7, data_edicao = CURRENT_TIMESTAMP WHERE id_test_step = $8 RETURNING *';
         const values = [
             testStep.nomeStep,
             testStep.ultimaExec,
