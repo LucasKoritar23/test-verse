@@ -95,9 +95,8 @@ pipeline {
                         lastTag = tags.last()
                         echo "Última tag encontrada: ${lastTag}"
                     } else {
-                        def primeiraTag = '1.0.0'
-                        echo "Nenhuma tag encontrada. Definindo a primeira tag: ${primeiraTag}"
-                        lastTag = primeiraTag
+                        echo "Nenhuma tag encontrada. Definindo a primeira tag"
+                        lastTag = '1.0.0'
                     }
 
                     def tagName = incrementTag(lastTag)
